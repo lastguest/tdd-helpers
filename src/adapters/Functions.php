@@ -22,7 +22,7 @@ class Functions implements \tad\interfaces\FunctionsAdapter
      *
      * @return mixed            The wrapped function return value.
      */
-    public function __call($function, Array $arguments = null)
+    public function __call($function, $arguments)
     {
         if (!is_string($function) or !function_exists($function)) {
             return;
