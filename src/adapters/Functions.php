@@ -14,7 +14,7 @@ class Functions implements \tad\interfaces\FunctionsAdapter
      * if 'some_function' is a function defined in the global scope
      * then a call to it could be made using the adapter like
      *
-     *     $adapter = new \tad\adapters\FunctionsAdapter();
+     *     $adapter = new \tad\adapters\Functions();
      *     $var = $adapter->some_function();
      *
      * @param  string $function  The function name.

@@ -46,13 +46,13 @@ class Globals implements \tad\interfaces\GlobalsAdapter
      *
      * Usage example to access $GLOBALS['foo'] is
      * 
-     *     $g = new \tad\Globals();
+     *     $g = new \tad\adapters\Globals();
      *     $foo = $g->globals('foo');
      * 
      * To get the superglobal array call the function with no arguments, i.e.
      * to get the $_SERVER array
      * 
-     *     $g = new \tad\Globals();
+     *     $g = new \tad\adapters\Globals();
      *     $g->server();
      *
      * @param string  $name The superglobal array slug (i.e. $_GET  becomes get)
