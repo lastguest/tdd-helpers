@@ -24,6 +24,24 @@ class GlobalsTest extends \PHPUnit_Framework_TestCase
     {
         $GLOBALS['foo'] = 'baz';
         $r = $this->sut->globals('foo');
-        $this->assertSame('baz',$r);
+        $this->assertEquals('baz',$r);
+    }
+    public function testItShouldAllowAcccessingScalarGlobalVarsDirectly()
+    {
+        global $someVar;
+        $someVar = 'someValue';
+        $this->assertEquals($this->sut->someVar(), 'someValue');
+    }
+    public function testItShouldAllowAccessingArrayGlobalVarDirectly()
+    {
+        global $someVar;
+        $someVar = array('someValue');
+        $this->assertEquals($this->sut->someVar(0), array('someValue'));
+    }
+    public function testItShouldAllowAccessingAssociativeArrayGlobalVarDirectly()
+    {
+        global $someVar;
+        $someVar = array('foo' => 'someValue');
+        $this->assertEquals($this->sut->someVar('foo'), 'someValue');
     }
 }
