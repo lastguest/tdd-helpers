@@ -3,7 +3,7 @@
  * A test helper to mock (in a way and with limits) static method calls.
  *
  * Tested class should allow for class name injection like
-     *
+ *
  *     public function __construct($var1, $var2, $util = '\StaticClass')
  *     {
  *         $this->util = $util;
