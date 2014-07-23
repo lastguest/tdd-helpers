@@ -62,3 +62,7 @@ and then in the test file
             $sut = new ClassName('some', 'var', 'StaticClass');
         }
     }
+
+## Changelog
+* 2.0.0 - "udpated" the package to be PHP <code>5.2</code> compatible with WordPress minimum requirements
+* 1.1.0 - first public release
