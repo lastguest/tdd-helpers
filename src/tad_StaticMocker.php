@@ -1,13 +1,10 @@
 <?php
-
-namespace tad\test\helpers;
-
 /**
  * A test helper to mock (in a way and with limits) static method calls.
  *
  * Tested class should allow for class name injection like
  *
- *     public function __construct($var1, $var2, $util = '\some\StaticClass')
+ *     public function __construct($var1, $var2, $util = '\StaticClass')
  *     {
  *         $this->util = $util;
  *
@@ -16,7 +13,7 @@ namespace tad\test\helpers;
  *
  * and then in the test file
  *
- *     class StaticClass extends \tad\test\helpers\StaticMocker
+ *     class StaticClass extends tad_StaticMocker
  *     {}
  *
  *
@@ -39,7 +36,7 @@ namespace tad\test\helpers;
  *     }
  *
  */
-class StaticMocker
+class tad_StaticMocker
 {
     protected static $methods;
     protected static $listener;

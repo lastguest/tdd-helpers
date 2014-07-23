@@ -8,7 +8,7 @@ class GlobalsTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->sut = new \tad\adapters\Globals();
+        $this->sut = new tad_GlobalsAdapter();
     }
     public function testWillReturnTheGlobalsArray()
     {
