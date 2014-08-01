@@ -63,6 +63,71 @@ and then in the test file
         }
     }
 
+## Static (<code>tad_Static</code>)
+Allows for a kind of late static binding missing from PHP <code>5.2</code>. 
+PHP 5.3 and above supplies developers with the `static` keyword
+
+    class ParentClass
+    {
+        public static function call()
+        {
+            static::someMethod();
+        }
+
+        protected static function someMethod()
+        {
+            echo "from class ParentClass";
+        }
+    }
+    class ChildClass extends ParentClass
+    {
+        protected static function someMethod()
+        {
+            echo "from class ChildClass";
+        }
+    }
+
+Calling `ChildClass::call()` will return `from class ChildClass`.
+The same can be obtained with the workaround provided by this class like
+
+    class ParentClass
+    {
+        public static function call()
+        {
+            if($class = tad_Static::getClassExtending(__CLASS__)){
+                return call_user_func(array($class, 'someMethod'));
+            }
+            return self::someMethod();
+        }
+
+        protected static function someMethod()
+        {
+            echo "from class ParentClass";
+        }
+    }
+
+    class ChildClass extends ParentClass
+    {
+        protected static function init()
+        {
+            tad_Static::setClassExtending('ParentClass', __CLASS__);
+        }
+
+        protected static function someMethod()
+        {
+            echo "from class ChildClass";
+        }
+    }
+
+Calling 
+
+    ChildClass::init();
+    ChildClass::call();
+
+will now return `from class ChildClass`.
+
 ## Changelog
-* 2.0.0 - "udpated" the package to be PHP <code>5.2</code> compatible with WordPress minimum requirements
+* 2.2.0 - added the <code>tad_Static</code> class to the package
+* 2.1.0 - added the <code>tad_TestCase</code> class to the package
+* 2.0.0 - "updated" the package to be PHP <code>5.2</code> compatible with WordPress minimum requirements
 * 1.1.0 - first public release
