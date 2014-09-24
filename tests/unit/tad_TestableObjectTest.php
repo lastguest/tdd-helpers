@@ -104,7 +104,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_return_a_mock_functions_adapter_with_mocked_methods()
     {
-        $fMock = A::getMockFunctionsAdapter($this);
+        $fMock = A::getMockFunctions($this);
         $this->assertTrue(method_exists($fMock, '__call'));
         $this->assertTrue(method_exists($fMock, 'functionOne'));
         $this->assertTrue(method_exists($fMock, 'functionTwo'));
@@ -116,7 +116,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_not_mock_the_same_functions_adapter_methods_twice()
     {
-        $fMock = B::getMockFunctionsAdapter($this);
+        $fMock = B::getMockFunctions($this);
         $this->assertTrue(method_exists($fMock, '__call'));
         $this->assertTrue(method_exists($fMock, 'functionOne'));
         $this->assertTrue(method_exists($fMock, 'functionTwo'));
@@ -128,7 +128,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_always_mock_the_functions_adpater_call_method()
     {
-        $fMock = C::getMockFunctionsAdapter($this);
+        $fMock = C::getMockFunctions($this);
         $this->assertTrue(method_exists($fMock, '__call'));
     }
 
@@ -138,7 +138,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_deal_with_different_separators_for_the_functions_adapter_methods()
     {
-        $fMock = D::getMockFunctionsAdapter($this);
+        $fMock = D::getMockFunctions($this);
         $this->assertTrue(method_exists($fMock, '__call'));
         $this->assertTrue(method_exists($fMock, 'functionOne'));
         $this->assertTrue(method_exists($fMock, 'functionTwo'));
@@ -158,7 +158,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_return_a_mock_globals_adapter_with_mocked_methods()
     {
-        $gMock = A::getMockGlobalsAdapter($this);
+        $gMock = A::getMockGlobals($this);
         $this->assertTrue(method_exists($gMock, '__call'));
         $this->assertTrue(method_exists($gMock, 'functionOne'));
         $this->assertTrue(method_exists($gMock, 'functionTwo'));
@@ -170,7 +170,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_not_mock_the_same_globals_adapter_methods_twice()
     {
-        $gMock = B::getMockGlobalsAdapter($this);
+        $gMock = B::getMockGlobals($this);
         $this->assertTrue(method_exists($gMock, '__call'));
         $this->assertTrue(method_exists($gMock, 'functionOne'));
         $this->assertTrue(method_exists($gMock, 'functionTwo'));
@@ -182,7 +182,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_always_mock_the_globals_adpater_call_method()
     {
-        $gMock = C::getMockGlobalsAdapter($this);
+        $gMock = C::getMockGlobals($this);
         $this->assertTrue(method_exists($gMock, '__call'));
     }
 
@@ -192,7 +192,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_deal_with_different_separators_for_the_globals_adapter_methods()
     {
-        $gMock = D::getMockGlobalsAdapter($this);
+        $gMock = D::getMockGlobals($this);
         $this->assertTrue(method_exists($gMock, '__call'));
         $this->assertTrue(method_exists($gMock, 'functionOne'));
         $this->assertTrue(method_exists($gMock, 'functionTwo'));
@@ -212,7 +212,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_getting_mock_functions_adapter_for_a_single_method()
     {
-        $mock = D::getMockFunctionsAdapter($this, 'methodOne');
+        $mock = D::getMockFunctions($this, 'methodOne');
         $this->assertTrue(method_exists($mock, '__call'));
         $this->assertTrue(method_exists($mock, 'functionOne'));
         $this->assertTrue(method_exists($mock, 'functionTwo'));
@@ -232,7 +232,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_getting_mock_globals_adapter_for_a_single_method()
     {
-        $mock = D::getMockGlobalsAdapter($this, 'methodOne');
+        $mock = D::getMockGlobals($this, 'methodOne');
         $this->assertTrue(method_exists($mock, '__call'));
         $this->assertTrue(method_exists($mock, 'functionOne'));
         $this->assertTrue(method_exists($mock, 'functionTwo'));
@@ -252,7 +252,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_getting_mock_functions_adapter_for_an_array_of_methods()
     {
-        $mock = D::getMockFunctionsAdapter($this, array('methodOne', 'methodTwo'));
+        $mock = D::getMockFunctions($this, array('methodOne', 'methodTwo'));
         $this->assertTrue(method_exists($mock, '__call'));
         $this->assertTrue(method_exists($mock, 'functionOne'));
         $this->assertTrue(method_exists($mock, 'functionTwo'));
@@ -272,7 +272,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_getting_mock_globals_adapter_for_an_array_of_methods()
     {
-        $mock = D::getMockGlobalsAdapter($this, array('methodOne', 'methodTwo'));
+        $mock = D::getMockGlobals($this, array('methodOne', 'methodTwo'));
         $this->assertTrue(method_exists($mock, '__call'));
         $this->assertTrue(method_exists($mock, 'functionOne'));
         $this->assertTrue(method_exists($mock, 'functionTwo'));

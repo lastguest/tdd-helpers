@@ -75,8 +75,8 @@ then the following testing oriented methods will be available to the class:
 
 * <code>setFunctionsAdapter</code> and <code>getFunctionsAdapter</code> allows injecting and getting the current global functions adapter
 * <code>setGlobalsAdapter</code> and <code>getGlobalsAdapter</code> allows injecting and getting the current global variables adapter
-* <code>getMockFunctionsAdapter</code>, a <code>static</code> method, allows getting a <code>tad_FunctionsAdapterInterface</code> mock object tailored on the class methods; specifying a method name, or an array of names, will allow getting a mock with method specific stub methods. The list of <code>tad_FunctionsAdapterInterface</code> methods to stub for each method must be explicitly indicated using the <code>@f</code> notation in the method comment block.
-* <code>getMockGlobalsAdapter</code>, a <code>static</code> method, allows getting a <code>tad_GlobalsAdapterInterface</code> mock object tailored on the class methods; specifying a method name, or an array of names, will allow getting a mock with method specific stub methods. The list of <code>tad_GlobalsAdapterInterface</code> methods to stub for each method must be explicitly indicated using the <code>@g</code> notation in the method comment block.
+* <code>getMockFunctions</code>, a <code>static</code> method, allows getting a <code>tad_FunctionsAdapterInterface</code> mock object tailored on the class methods; specifying a method name, or an array of names, will allow getting a mock with method specific stub methods. The list of <code>tad_FunctionsAdapterInterface</code> methods to stub for each method must be explicitly indicated using the <code>@f</code> notation in the method comment block.
+* <code>getMockGlobals</code>, a <code>static</code> method, allows getting a <code>tad_GlobalsAdapterInterface</code> mock object tailored on the class methods; specifying a method name, or an array of names, will allow getting a mock with method specific stub methods. The list of <code>tad_GlobalsAdapterInterface</code> methods to stub for each method must be explicitly indicated using the <code>@g</code> notation in the method comment block.
 
 ### Example
 Given a class like
@@ -121,13 +121,13 @@ the class will use the DocBlock to create *ad hoc* mocks during tests and it's m
     //    'functionTwo'
     //    'functionThree'
     //    'functionFour'
-    $mockF = MyTestableClass::getMockFunctionsAdapter($this);
+    $mockF = MyTestableClass::getMockFunctions($this);
 
     // $mockG will define the methods
     //    '__call'
     //    'server'
     //    'globals'
-    $mockG = MyTestableClass::getMockGlobalsAdapter($this);
+    $mockG = MyTestableClass::getMockGlobals($this);
 
 those stubs will then be configurable as any test double produced using the <code>PHPUnit_Framework_TestCase::getMock()</code> method.  
 Specifying a method name, or an array of method names, will produce a mock stubbing adapter methods used in the specified methods alone
@@ -136,9 +136,9 @@ Specifying a method name, or an array of method names, will produce a mock stubb
     //    '__call'
     //    'functionOne'
     //    'functionTwo'
-    $mockF = MyTestableClass::getMockFunctionsAdapter($this, 'methodOne');
+    $mockF = MyTestableClass::getMockFunctions($this, 'methodOne');
 
     // $mockG will define the methods
     //    '__call'
     //    'server'
-    $mockG = MyTestableClass::getMockGlobalsAdapter($this, 'methodOne');
+    $mockG = MyTestableClass::getMockGlobals($this, 'methodOne');
