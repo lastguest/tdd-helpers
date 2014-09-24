@@ -113,7 +113,7 @@ Given a class like
         }
     }
 
-the class will use the DocBlock to create *ad hoc* mocks like during testing
+the class will use the DocBlock to create *ad hoc* mocks during tests and it's meant to be used inside a <code>PHPUnit_Framework_TestCase</code> class definition
 
     // $mockF will define the stub methods
     //    '__call'
@@ -121,13 +121,13 @@ the class will use the DocBlock to create *ad hoc* mocks like during testing
     //    'functionTwo'
     //    'functionThree'
     //    'functionFour'
-    $mockF = MyTestableClass::getMockFunctionsAdapter();
+    $mockF = MyTestableClass::getMockFunctionsAdapter($this);
 
     // $mockG will define the methods
     //    '__call'
     //    'server'
     //    'globals'
-    $mockG = MyTestableClass::getMockGlobalsAdapter();
+    $mockG = MyTestableClass::getMockGlobalsAdapter($this);
 
 those stubs will then be configurable as any test double produced using the <code>PHPUnit_Framework_TestCase::getMock()</code> method.  
 Specifying a method name, or an array of method names, will produce a mock stubbing adapter methods used in the specified methods alone
@@ -136,9 +136,9 @@ Specifying a method name, or an array of method names, will produce a mock stubb
     //    '__call'
     //    'functionOne'
     //    'functionTwo'
-    $mockF = MyTestableClass::getMockFunctionsAdapter('methodOne');
+    $mockF = MyTestableClass::getMockFunctionsAdapter($this, 'methodOne');
 
     // $mockG will define the methods
     //    '__call'
     //    'server'
-    $mockG = MyTestableClass::getMockGlobalsAdapter('methodOne');
+    $mockG = MyTestableClass::getMockGlobalsAdapter($this, 'methodOne');
