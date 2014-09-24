@@ -7,31 +7,38 @@ abstract class tad_TestableObject
     protected $f;
     protected $g;
 
-    protected static function getMockAdapter(PHPUnit_Framework_TestCase $testCase, $className, $notation, $toStubClassName, $alwaysStubMethods = null)
+    protected static function getMock(PHPUnit_Framework_TestCase $testCase, $className, $methodNameOrArray = null, $notation, $toStubClassName, $alwaysStubMethods = null)
     {
         if (!is_string($className)) {
-            // PHP >= 5.3
-            if (function_exists('get_called_class')) {
-                $className = get_called_class();
-            } else {
-                // PHP < 5.3
-                throw new InvalidArgumentException('Class name must be a string!');
-            }
+            $className = get_called_class();
         }
         if (!class_exists($className)) {
             throw new InvalidArgumentException("Class $className does not exisit", 2);
         }
+        if ($methodNameOrArray && !is_string($methodNameOrArray) && !is_array($methodNameOrArray)) {
+            throw new InvalidArgumentException('Method name must either be a string or an array of method names', 3);
+        }
         if (!is_string($notation)) {
-            throw new InvalidArgumentException('Comment notation must be a string', 3);
+            throw new InvalidArgumentException('Comment notation must be a string', 4);
         }
         if (!is_string($toStubClassName)) {
-            throw new InvalidArgumentException('The name of the class to stub must be a string', 4);
+            throw new InvalidArgumentException('The name of the class to stub must be a string', 5);
         }
         if ($alwaysStubMethods && !is_array($alwaysStubMethods)) {
-            throw new InvalidArgumentException('Methods to always stub must come in an array', 5);
+            throw new InvalidArgumentException('Methods to always stub must come in an array', 6);
         }
         $reflection = new ReflectionClass($className);
         $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
+        if ($methodNameOrArray) {
+            $methodsWhitelist = is_array($methodNameOrArray) ? $methodNameOrArray : array($methodNameOrArray);
+            $filteredMethods = array();
+            foreach ($methods as $method) {
+                if (in_array($method->name, $methodsWhitelist)) {
+                    $filteredMethods[] = $method;
+                }
+            }
+            $methods = $filteredMethods;
+        }
         $toStub = is_array($alwaysStubMethods) ? $alwaysStubMethods : array();
         foreach ($methods as $method) {
             if ($doc = $method->getDocComment()) {
@@ -72,13 +79,13 @@ abstract class tad_TestableObject
         return $this->g;
     }
 
-    public static function getMockFunctionsAdapter(PHPUnit_Framework_TestCase $testCase, $className = null)
+    public static function getMockFunctionsAdapter(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null, $className = null)
     {
-        return self::getMockAdapter($testCase, $className, 'f', 'tad_FunctionsAdapterInterface', array('__call'));
+        return self::getMock($testCase, $className, $methodNameOrArray, 'f', 'tad_FunctionsAdapterInterface', array('__call'));
     }
 
-    public static function getMockGlobalsAdapter(PHPUnit_Framework_TestCase $testCase, $className = null)
+    public static function getMockGlobalsAdapter(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null, $className = null)
     {
-        return self::getMockAdapter($testCase, $className, 'g', 'tad_GlobalsAdapterInterface', array('__call'));
+        return self::getMock($testCase, $className, $methodNameOrArray, 'g', 'tad_GlobalsAdapterInterface', array('__call'));
     }
 }

@@ -205,4 +205,44 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(method_exists($gMock, 'functionNine'));
         $this->assertTrue(method_exists($gMock, 'functionTen'));
     }
+
+    /**
+     * @test
+     * it should allow getting mock functions adapter for a single method
+     */
+    public function it_should_allow_getting_mock_functions_adapter_for_a_single_method()
+    {
+        $mock = D::getMockFunctionsAdapter($this, 'methodOne');
+        $this->assertTrue(method_exists($mock, '__call'));
+        $this->assertTrue(method_exists($mock, 'functionOne'));
+        $this->assertTrue(method_exists($mock, 'functionTwo'));
+        $this->assertFalse(method_exists($mock, 'functionThree'));
+        $this->assertFalse(method_exists($mock, 'functionFour'));
+        $this->assertFalse(method_exists($mock, 'functionFive'));
+        $this->assertFalse(method_exists($mock, 'functionSix'));
+        $this->assertFalse(method_exists($mock, 'functionSeven'));
+        $this->assertFalse(method_exists($mock, 'functionEight'));
+        $this->assertFalse(method_exists($mock, 'functionNine'));
+        $this->assertFalse(method_exists($mock, 'functionTen'));
+    }
+
+    /**
+     * @test
+     * it should allow getting mock globals adapter for a single method
+     */
+    public function it_should_allow_getting_mock_globals_adapter_for_a_single_method()
+    {
+        $mock = D::getMockGlobalsAdapter($this, 'methodOne');
+        $this->assertTrue(method_exists($mock, '__call'));
+        $this->assertTrue(method_exists($mock, 'functionOne'));
+        $this->assertTrue(method_exists($mock, 'functionTwo'));
+        $this->assertFalse(method_exists($mock, 'functionThree'));
+        $this->assertFalse(method_exists($mock, 'functionFour'));
+        $this->assertFalse(method_exists($mock, 'functionFive'));
+        $this->assertFalse(method_exists($mock, 'functionSix'));
+        $this->assertFalse(method_exists($mock, 'functionSeven'));
+        $this->assertFalse(method_exists($mock, 'functionEight'));
+        $this->assertFalse(method_exists($mock, 'functionNine'));
+        $this->assertFalse(method_exists($mock, 'functionTen'));
+    }
 }
