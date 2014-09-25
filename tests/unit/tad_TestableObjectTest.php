@@ -355,4 +355,38 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(method_exists($mock, 'functionThree'));
         $this->assertTrue(method_exists($mock, 'functionFour'));
     }
+
+    /**
+     * @test
+     * it should return a tad_MockObject instance when calling getMockFunctionsBuilder method
+     */
+    public function it_should_return_a_tad_mock_object_instance_when_calling_get_mock_functions_builder_method()
+    {
+        $this->assertInstanceOf('tad_MockObject', E::getMockFunctionsBuilder($this));
+    }
+
+    /**
+     * @test
+     * it should return a tad_MockObject instance when calling the getMockGlobalsBuilder method
+     */
+    public function it_should_return_a_tad_mock_object_instance_when_calling_the_get_mock_globals_builder_method()
+    {
+        $this->assertInstanceOf('tad_MockObject', E::getMockGlobalsBuilder($this));
+    }
+
+
+    /**
+     * @test
+     * it should allow using fluent interface to build functions adapter mocks
+     */
+    public function it_should_allow_using_fluent_interface_to_build_functions_adapter_mocks()
+    {
+        $mock = E::getMockFunctionsBuilder($this)
+            ->forMethods('methodOne')
+            ->withNotation(array('Functions', 'baz'))
+            ->getMockFunctions();
+        $this->assertTrue(method_exists($mock, '__call'));
+        $this->assertTrue(method_exists($mock, 'functionOne'));
+        $this->assertTrue(method_exists($mock, 'functionTwo'));
+    }
 }
