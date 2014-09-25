@@ -113,9 +113,9 @@ class tad_MockObject
                 }
             }
         }
-        $mocks = array();
+        $mocks = new stdClass();
         foreach ($mockables as $mockable) {
-            $mocks[$mockable] = $this->testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
+            $mocks->$mockable = $this->testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
         }
         return $mocks;
     }
