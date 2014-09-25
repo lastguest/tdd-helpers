@@ -7,11 +7,9 @@ abstract class tad_TestableObject
     protected $f;
     protected $g;
 
-    protected static function getMock(PHPUnit_Framework_TestCase $testCase, $className, $methodNameOrArray = null, $notation, $toStubClassName, $alwaysStubMethods = null)
+    protected static function getMock(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null, $notation, $toStubClassName, $alwaysStubMethods = null)
     {
-        if (!is_string($className)) {
-            $className = get_called_class();
-        }
+        $className = get_called_class();
         if (!class_exists($className)) {
             throw new InvalidArgumentException("Class $className does not exisit", 2);
         }
@@ -79,13 +77,13 @@ abstract class tad_TestableObject
         return $this->g;
     }
 
-    public static function getMockFunctions(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null, $className = null)
+    public static function getMockFunctions(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null)
     {
-        return self::getMock($testCase, $className, $methodNameOrArray, 'f', 'tad_FunctionsAdapterInterface', array('__call'));
+        return self::getMock($testCase, $methodNameOrArray, 'f', 'tad_FunctionsAdapterInterface', array('__call'));
     }
 
-    public static function getMockGlobals(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null, $className = null)
+    public static function getMockGlobals(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null)
     {
-        return self::getMock($testCase, $className, $methodNameOrArray, 'g', 'tad_GlobalsAdapterInterface', array('__call'));
+        return self::getMock($testCase, $methodNameOrArray, 'g', 'tad_GlobalsAdapterInterface', array('__call'));
     }
 }
