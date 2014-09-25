@@ -88,6 +88,25 @@ class D extends tad_TestableObject
     }
 }
 
+class E extends tad_TestableObject
+{
+
+    /**
+     * @Functions functionOne,functionTwo
+     * @Globals functionOne,functionTwo
+     */
+    public function methodOne()
+    {
+    }
+
+    /**
+     * @baz functionThree, functionFour
+     * @bar functionThree, functionFour
+     */
+    public function methodTwo()
+    {
+    }
+}
 class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
@@ -286,4 +305,54 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(method_exists($mock, 'functionTen'));
     }
 
+    /**
+     * @test
+     * it should allow specifying the notation for the functions adapter
+     */
+    public function it_should_allow_specifying_the_notation_for_the_functions_adapter()
+    {
+        $mock = E::getMockFunctions($this, 'methodOne', 'Functions');
+        $this->assertTrue(method_exists($mock, '__call'));
+        $this->assertTrue(method_exists($mock, 'functionOne'));
+        $this->assertTrue(method_exists($mock, 'functionTwo'));
+    }
+    /**
+     * @test
+     * it should allow specifying the notation for the globals adapter
+     */
+    public function it_should_allow_specifying_the_notation_for_the_globals_adapter()
+    {
+        $mock = E::getMockFunctions($this, 'methodOne', 'Globals');
+        $this->assertTrue(method_exists($mock, '__call'));
+        $this->assertTrue(method_exists($mock, 'functionOne'));
+        $this->assertTrue(method_exists($mock, 'functionTwo'));
+    }
+
+    /**
+     * @test
+     * it should allow specifying an array of notations for the functions adapter
+     */
+    public function it_should_allow_specifying_an_array_of_notations_for_the_functions_adapter()
+    {
+        $mock = E::getMockFunctions($this, null, array('Functions', 'baz'));
+        $this->assertTrue(method_exists($mock, '__call'));
+        $this->assertTrue(method_exists($mock, 'functionOne'));
+        $this->assertTrue(method_exists($mock, 'functionTwo'));
+        $this->assertTrue(method_exists($mock, 'functionThree'));
+        $this->assertTrue(method_exists($mock, 'functionFour'));
+    }
+
+    /**
+     * @test
+     * it should allow specifying an array of notations for the globals adapter
+     */
+    public function it_should_allow_specifying_an_array_of_notations_for_the_globals_adapter()
+    {
+        $mock = E::getMockGlobals($this, null, array('Globals', 'bar'));
+        $this->assertTrue(method_exists($mock, '__call'));
+        $this->assertTrue(method_exists($mock, 'functionOne'));
+        $this->assertTrue(method_exists($mock, 'functionTwo'));
+        $this->assertTrue(method_exists($mock, 'functionThree'));
+        $this->assertTrue(method_exists($mock, 'functionFour'));
+    }
 }
