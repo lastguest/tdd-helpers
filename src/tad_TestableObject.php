@@ -77,13 +77,15 @@ abstract class tad_TestableObject
         return $this->g;
     }
 
-    public static function getMockFunctions(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null)
+    public static function getMockFunctions(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null, $notation = null)
     {
-        return self::getMock($testCase, $methodNameOrArray, 'f', 'tad_FunctionsAdapterInterface', array('__call'));
+        $notation = $notation ? $notation : 'f';
+        return self::getMock($testCase, $methodNameOrArray, $notation, 'tad_FunctionsAdapterInterface', array('__call'));
     }
 
-    public static function getMockGlobals(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null)
+    public static function getMockGlobals(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null, $notation = null)
     {
-        return self::getMock($testCase, $methodNameOrArray, 'g', 'tad_GlobalsAdapterInterface', array('__call'));
+        $notation = $notation ? $notation : 'g';
+        return self::getMock($testCase, $methodNameOrArray, $notation, 'tad_GlobalsAdapterInterface', array('__call'));
     }
 }
