@@ -213,4 +213,5 @@ class tad_MockObjectTest extends \PHPUnit_Framework_TestCase
         $test231 = new Test231();
         $this->assertEquals(9, $test231->methodThree($mockDeps->Test119, $mockDeps->Interface120));
     }
+
 }

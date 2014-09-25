@@ -54,4 +54,17 @@ abstract class tad_TestableObject
         $mock->setMethods('__call');
         return $mock;
     }
+
+    public static function getMocksFor(PHPUnit_Framework_TestCase $testCase, $methodName){
+        if (!is_string($methodName)) {
+            throw new InvalidArgumentException('Method name must be a string', 1);
+        }
+        $className = get_called_class();
+        if (!method_exists($className, $methodName)) {
+            throw new InvalidArgumentException("Method $methodName does not exist", 2);
+        }
+        $mocker = new tad_MockObject($testCase, $className);
+        return $mocker->setMethod($methodName)
+            ->getMocks();
+    }
 }
