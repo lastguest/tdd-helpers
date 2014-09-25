@@ -39,14 +39,14 @@ class Test231 extends tad_TestableObject
 {
 
     /**
-     * @inject Test119, Interface120
+     * @depends Test119, Interface120
      */
     public function __construct()
     {
     }
 
     /**
-     * @inject Test119, Interface120
+     * @depends Test119, Interface120
      */
     public function methodOne()
     {
@@ -54,7 +54,7 @@ class Test231 extends tad_TestableObject
     }
 
     /**
-     * @inject Test119, Interface119
+     * @depends Test119, Interface119
      */
     public function methodTwo()
     {
@@ -62,7 +62,7 @@ class Test231 extends tad_TestableObject
     }
 
     /**
-     * @inject Test119, Interface120
+     * @depends Test119, Interface120
      */
     public function methodThree(Test119 $test119, Interface120 $interface120)
     {

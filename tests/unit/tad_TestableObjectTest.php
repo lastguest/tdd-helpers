@@ -447,4 +447,5 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(method_exists($mock, 'server'));
         $this->assertTrue(method_exists($mock, 'post'));
     }
+
 }

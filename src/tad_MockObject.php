@@ -99,7 +99,7 @@ class tad_MockObject
         return $this;
     }
     public function getMocks(){
-        $notation = $this->notation ? '@' . $this->notation : '@inject';
+        $notation = $this->notation ? '@' . $this->notation : '@depends';
         $reflector = new ReflectionMethod($this->className, $this->methodName);
         $docBlock = $reflector->getDocComment();
         $lines = explode("\n", $docBlock);
