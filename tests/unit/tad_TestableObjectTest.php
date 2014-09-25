@@ -107,6 +107,17 @@ class E extends tad_TestableObject
     {
     }
 }
+class F extends tad_TestableObject{
+
+    /**
+     * @inject A, B, C
+     * @Functions function1, function2
+     * @Globals server, post
+     */
+    public function __construct(){
+
+    }
+}
 class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
@@ -403,5 +414,37 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(method_exists($mock, '__call'));
         $this->assertTrue(method_exists($mock, 'functionOne'));
         $this->assertTrue(method_exists($mock, 'functionTwo'));
+    }
+
+    /**
+     * @test
+     * it should allow mocking constructor functions adapter dependency
+     */
+    public function it_should_allow_mockin_constructor_functions_adapter_dependency()
+    {
+        $mock = F::getMockFunctionsBuilder($this)
+            ->forMethods('__construct')
+            ->setNotation('Functions')
+            ->setMethods('__call')
+            ->getMock();
+        $this->assertTrue(method_exists($mock, '__call'));
+        $this->assertTrue(method_exists($mock, 'function1'));
+        $this->assertTrue(method_exists($mock, 'function2'));
+    }
+
+    /**
+     * @test
+     * it should allow mocking constructor globals adapter dependencies
+     */
+    public function it_should_allow_mocking_constructor_globals_adapter_dependencies()
+    {
+        $mock = F::getMockGlobalsBuilder($this)
+            ->forMethods('__construct')
+            ->setNotation('Globals')
+            ->setMethods('__call')
+            ->getMock();
+        $this->assertTrue(method_exists($mock, '__call'));
+        $this->assertTrue(method_exists($mock, 'server'));
+        $this->assertTrue(method_exists($mock, 'post'));
     }
 }
