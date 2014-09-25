@@ -45,9 +45,13 @@ abstract class tad_TestableObject
         return self::getMock($testCase, $methodNameOrArray, $notation, 'tad_GlobalsAdapterInterface', array('__call'));
     }
     public static function getMockFunctionsBuilder(PHPUnit_Framework_TestCase $testCase){
-        return new tad_MockObject($testCase, get_called_class(), 'tad_FunctionsAdapterInterface');
+        $mock = new tad_MockObject($testCase, get_called_class(), 'tad_FunctionsAdapterInterface');
+        $mock->setMethods('__call');
+        return $mock;
     }
     public static function getMockGlobalsBuilder(PHPUnit_Framework_TestCase $testCase){
-        return new tad_MockObject($testCase, get_called_class(), 'tad_GlobalsAdapterInterface');
+        $mock = new tad_MockObject($testCase, get_called_class(), 'tad_GlobalsAdapterInterface');
+        $mock->setMethods('__call');
+        return $mock;
     }
 }

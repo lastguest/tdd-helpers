@@ -61,4 +61,22 @@ class tad_MockObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(method_exists($mock, 'functionTwo'));
     }
 
+    /**
+     * @test
+     * it should allow specifying the notations using an array
+     */
+    public function it_should_allow_specifying_the_notations_using_an_array()
+    {
+        $mock = $this->getSutInstance()
+            ->setNotation(array('Functions', 'baz'))
+            ->setMethods('__call')
+            ->getMock();
+        $this->assertTrue(method_exists($mock, '__call'));
+        $this->assertTrue(method_exists($mock, 'functionOne'));
+        $this->assertTrue(method_exists($mock, 'functionTwo'));
+        $this->assertTrue(method_exists($mock, 'functionThree'));
+        $this->assertTrue(method_exists($mock, 'functionFour'));
+        $this->assertTrue(method_exists($mock, 'functionFive'));
+        $this->assertTrue(method_exists($mock, 'functionSix'));
+    }
 }

@@ -383,8 +383,23 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
     {
         $mock = E::getMockFunctionsBuilder($this)
             ->forMethods('methodOne')
-            ->withNotation(array('Functions', 'baz'))
-            ->getMockFunctions();
+            ->setNotation(array('Functions', 'baz'))
+            ->getMock();
+        $this->assertTrue(method_exists($mock, '__call'));
+        $this->assertTrue(method_exists($mock, 'functionOne'));
+        $this->assertTrue(method_exists($mock, 'functionTwo'));
+    }
+
+    /**
+     * @test
+     * it should allow using fluent interface to build globals adapter mocks
+     */
+    public function it_should_allow_using_fluent_interface_to_build_globals_adapter_mocks()
+    {
+        $mock = E::getMockGlobalsBuilder($this)
+            ->forMethods('methodOne')
+            ->setNotation(array('Functions', 'baz'))
+            ->getMock();
         $this->assertTrue(method_exists($mock, '__call'));
         $this->assertTrue(method_exists($mock, 'functionOne'));
         $this->assertTrue(method_exists($mock, 'functionTwo'));
