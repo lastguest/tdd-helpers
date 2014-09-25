@@ -7,12 +7,6 @@ abstract class tad_TestableObject
     protected $f;
     protected $g;
 
-    protected static function getMock(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null, $notation, $toStubClassName, $alwaysStubMethods = null)
-    {
-        $mockObject = new tad_MockObject($testCase, get_called_class(), $toStubClassName);
-        return $mockObject->getMock($methodNameOrArray, $notation, $alwaysStubMethods);
-    }
-
     public function setFunctionsAdapter(tad_FunctionsAdapter $f = null)
     {
         $this->f = $f ? $f : new tad_FunctionsAdapter();
@@ -33,28 +27,6 @@ abstract class tad_TestableObject
         return $this->g;
     }
 
-    public static function getMockFunctions(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null, $notation = null)
-    {
-        $notation = $notation ? $notation : 'f';
-        return self::getMock($testCase, $methodNameOrArray, $notation, 'tad_FunctionsAdapterInterface', array('__call'));
-    }
-
-    public static function getMockGlobals(PHPUnit_Framework_TestCase $testCase, $methodNameOrArray = null, $notation = null)
-    {
-        $notation = $notation ? $notation : 'g';
-        return self::getMock($testCase, $methodNameOrArray, $notation, 'tad_GlobalsAdapterInterface', array('__call'));
-    }
-    public static function getMockFunctionsBuilder(PHPUnit_Framework_TestCase $testCase){
-        $mock = new tad_MockObject($testCase, get_called_class(), 'tad_FunctionsAdapterInterface');
-        $mock->setMethods('__call');
-        return $mock;
-    }
-    public static function getMockGlobalsBuilder(PHPUnit_Framework_TestCase $testCase){
-        $mock = new tad_MockObject($testCase, get_called_class(), 'tad_GlobalsAdapterInterface');
-        $mock->setMethods('__call');
-        return $mock;
-    }
-
     public static function getMocksFor(PHPUnit_Framework_TestCase $testCase, $methodName){
         if (!is_string($methodName)) {
             throw new InvalidArgumentException('Method name must be a string', 1);
@@ -63,7 +35,7 @@ abstract class tad_TestableObject
         if (!method_exists($className, $methodName)) {
             throw new InvalidArgumentException("Method $methodName does not exist", 2);
         }
-        $mocker = new tad_MockObject($testCase, $className);
+        $mocker = new tad_DependencyMocker($testCase, $className);
         return $mocker->setMethod($methodName)
             ->getMocks();
     }
