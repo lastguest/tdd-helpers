@@ -58,9 +58,15 @@ class tad_DependencyMocker
         return $this->getMocksObjectOrArray(true);
     }
 
+    /**
+     * Returns an array containing the mocked dependencies.
+     *
+     * The array format is ['ClassName' => mock].
+     *
+     * @return array
+     */
     public function getMocksArray()
     {
-
         return $this->getMocksObjectOrArray(false);
     }
 
@@ -80,7 +86,7 @@ class tad_DependencyMocker
     }
 
     /**
-     * @return stdClass
+     * @return stdClass/array
      */
     protected function getMocksObjectOrArray($getObject = true)
     {
@@ -117,6 +123,12 @@ class tad_DependencyMocker
     }
 }
 
+/**
+ * Class tad_SpoofTestCase
+ *
+ * Just an extension of the PHPUnit_Framework_TestCase class
+ * to allow for method mocks creation.
+ */
 class tad_SpoofTestCase extends PHPUnit_Framework_TestCase{
 
 }
