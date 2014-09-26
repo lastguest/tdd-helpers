@@ -1,33 +1,28 @@
 <?php
 
-
+/**
+ * Class tad_TestableObject
+ *
+ * A class that's meant to be used as a parent class for objects developed using TDD techniques.
+ */
 abstract class tad_TestableObject
 {
-
-    protected $f;
-    protected $g;
-
-    public function setFunctionsAdapter(tad_FunctionsAdapter $f = null)
+    /**
+     * Gets the mocked dependencies for one or more of the class public methods.
+     *
+     * The extending class is required to define valid doc blocks
+     * for each public method that's meant to have its dependencies
+     * mocked using the "@depends" notation.
+     * See tad_DependencyMocker class for more in-detail information.
+     *
+     *      * @depends A, B, CInterface
+     *
+     * @param PHPUnit_Framework_TestCase $testCase
+     * @param $methodName
+     * @return stdClass
+     */
+    public static function getMocksFor(PHPUnit_Framework_TestCase $testCase, $methodName)
     {
-        $this->f = $f ? $f : new tad_FunctionsAdapter();
-    }
-
-    public function getFunctionsAdapter()
-    {
-        return $this->F;
-    }
-
-    public function setGlobalsAdapter(tad_GlobalsAdapterInterface $g = null)
-    {
-        $this->g = $g ? $g : new tad_GlobalsAdapter();
-    }
-
-    public function getGlobalsAdapter()
-    {
-        return $this->g;
-    }
-
-    public static function getMocksFor(PHPUnit_Framework_TestCase $testCase, $methodName){
         if (!is_string($methodName)) {
             throw new InvalidArgumentException('Method name must be a string', 1);
         }
