@@ -13,7 +13,6 @@
  */
 class tad_DependencyMocker
 {
-    protected $testCase;
     protected $className;
     protected $methodName;
     protected $notation;
@@ -22,7 +21,7 @@ class tad_DependencyMocker
      * @param PHPUnit_Framework_TestCase $testCase
      * @param $className
      */
-    public function __construct(PHPUnit_Framework_TestCase $testCase, $className)
+    public function __construct($className)
     {
         if (!is_string($className)) {
             throw new InvalidArgumentException('Class name must be a string', 1);
@@ -30,7 +29,6 @@ class tad_DependencyMocker
         if (!class_exists($className)) {
             throw new InvalidArgumentException("Class $className does not exisit", 2);
         }
-        $this->testCase = $testCase;
         $this->className = $className;
     }
 
@@ -103,17 +101,22 @@ class tad_DependencyMocker
                 }
             }
         }
+        $testCase = new tad_SpoofTestCase();
         if ($getObject) {
             $mocks = new stdClass();
             foreach ($mockables as $mockable) {
-                $mocks->$mockable = $this->testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
+                $mocks->$mockable = $testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
             }
         } else {
             $mocks = array();
             foreach ($mockables as $mockable) {
-                $mocks[$mockable] = $this->testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
+                $mocks[$mockable] = $testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
             }
         }
         return $mocks;
     }
+}
+
+class tad_SpoofTestCase extends PHPUnit_Framework_TestCase{
+
 }

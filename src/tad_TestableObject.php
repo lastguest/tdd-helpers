@@ -21,7 +21,7 @@ abstract class tad_TestableObject
      * @param $methodName
      * @return stdClass
      */
-    public static function getMocksFor(PHPUnit_Framework_TestCase $testCase, $methodName)
+    public static function getMocksFor($methodName)
     {
         if (!is_string($methodName)) {
             throw new InvalidArgumentException('Method name must be a string', 1);
@@ -33,7 +33,7 @@ abstract class tad_TestableObject
         if (!method_exists($className, $methodName)) {
             throw new InvalidArgumentException("Method $methodName does not exist", 3);
         }
-        $mocker = new tad_DependencyMocker($testCase, $className);
+        $mocker = new tad_DependencyMocker($className);
         return $mocker->setMethods($methodName)
             ->getMocks();
     }

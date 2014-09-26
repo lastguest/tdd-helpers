@@ -66,7 +66,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_getting_mocked_dependencies_of_constructor()
     {
-        $deps = Test678::getMocksFor($this, '__construct');
+        $deps = Test678::getMocksFor('__construct');
         $this->assertInstanceOf('stdClass', $deps);
         $this->assertObjectHasAttribute('A', $deps);
         $this->assertObjectHasAttribute('B', $deps);
@@ -83,7 +83,7 @@ class tad_TestableObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_getting_mocked_dependencies_of_method()
     {
-        $deps = Test678::getMocksFor($this, 'methodOne');
+        $deps = Test678::getMocksFor('methodOne');
         $this->assertInstanceOf('stdClass', $deps);
         $this->assertObjectHasAttribute('A', $deps);
         $this->assertObjectHasAttribute('B', $deps);
