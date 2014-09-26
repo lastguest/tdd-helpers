@@ -28,16 +28,19 @@ class tad_DependencyMocker
     public function getMocks()
     {
         $notation = $this->notation ? '@' . $this->notation : '@depends';
-        $reflector = new ReflectionMethod($this->className, $this->methodName);
-        $docBlock = $reflector->getDocComment();
-        $lines = explode("\n", $docBlock);
+        $methods = is_array($this->methodName) ? $this->methodName : array($this->methodName);
         $mockables = array();
-        foreach ($lines as $line) {
-            if (count($parts = explode($notation, $line)) > 1) {
-                $classes = trim(preg_replace("/[,;(; )(, )]+/", " ", $parts[1]));
-                $classes = explode(' ', $classes);
-                foreach ($classes as $class) {
-                    $mockables[] = $class;
+        foreach ($methods as $method) {
+            $reflector = new ReflectionMethod($this->className, $method);
+            $docBlock = $reflector->getDocComment();
+            $lines = explode("\n", $docBlock);
+            foreach ($lines as $line) {
+                if (count($parts = explode($notation, $line)) > 1) {
+                    $classes = trim(preg_replace("/[,;(; )(, )]+/", " ", $parts[1]));
+                    $classes = explode(' ', $classes);
+                    foreach ($classes as $class) {
+                        $mockables[] = $class;
+                    }
                 }
             }
         }
@@ -50,8 +53,8 @@ class tad_DependencyMocker
 
     public function setMethod($methodName)
     {
-        if (!is_string($methodName)) {
-            throw new InvalidArgumentException('Method name must be a string', 1);
+        if (!is_string($methodName) && !is_array($methodName)) {
+            throw new InvalidArgumentException('Method name must be a string or an array', 1);
         }
         $this->methodName = $methodName;
         return $this;

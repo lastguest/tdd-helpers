@@ -161,4 +161,22 @@ class tad_DependencyMockerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(9, $test231->methodThree($mockDeps->Test119, $mockDeps->Interface120));
     }
 
+    /**
+     * @test
+     * it should allow mocking dependencies for multiple methods passing an array
+     */
+    public function it_should_allow_mocking_dependencies_for_multiple_methods_passing_an_array()
+    {
+        $sut = new tad_DependencyMocker($this, 'Test231');
+        $mockDeps = $sut->setMethod(array('methodTwo', 'methodThree'))
+            ->getMocks();
+        $this->assertObjectHasAttribute('Test119', $mockDeps);
+        $this->assertObjectHasAttribute('Interface119', $mockDeps);
+        $this->assertObjectHasAttribute('Interface120', $mockDeps);
+        $this->assertTrue(method_exists($mockDeps->Test119, 'methodOne'));
+        $this->assertTrue(method_exists($mockDeps->Test119, 'methodTwo'));
+        $this->assertTrue(method_exists($mockDeps->Test119, 'methodThree'));
+        $this->assertTrue(method_exists($mockDeps->Interface119, '__call'));
+        $this->assertTrue(method_exists($mockDeps->Interface120, 'someMethod'));
+    }
 }
