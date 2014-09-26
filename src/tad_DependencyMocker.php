@@ -72,7 +72,7 @@ class tad_DependencyMocker
      * @param $methodName
      * @return $this
      */
-    public function setMethod($methodName)
+    public function setMethods($methodName)
     {
         if (!is_string($methodName) && !is_array($methodName)) {
             throw new InvalidArgumentException('Method name must be a string or an array', 1);

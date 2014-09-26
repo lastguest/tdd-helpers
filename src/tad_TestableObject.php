@@ -34,7 +34,7 @@ abstract class tad_TestableObject
             throw new InvalidArgumentException("Method $methodName does not exist", 3);
         }
         $mocker = new tad_DependencyMocker($testCase, $className);
-        return $mocker->setMethod($methodName)
+        return $mocker->setMethods($methodName)
             ->getMocks();
     }
 }
