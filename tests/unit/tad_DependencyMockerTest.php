@@ -198,4 +198,19 @@ class tad_DependencyMockerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(method_exists($mockDeps['Interface119'], '__call'));
         $this->assertTrue(method_exists($mockDeps['Interface120'], 'someMethod'));
     }
+
+    /**
+     * @test
+     * it should allow extracting mocked dependencies
+     */
+    public function it_should_allow_extracting_mocked_dependencies()
+    {
+        $sut = new tad_DependencyMocker($this, 'Test231');
+        $mockDeps = $sut->setMethod(array('methodTwo', 'methodThree'))
+            ->getMocksArray();
+        extract($mockDeps);
+        $this->assertNotNull($Test119);
+        $this->assertNotNull($Interface119);
+        $this->assertNotNull($Interface120);
+    }
 }
