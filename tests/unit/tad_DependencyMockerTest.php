@@ -179,4 +179,23 @@ class tad_DependencyMockerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(method_exists($mockDeps->Interface119, '__call'));
         $this->assertTrue(method_exists($mockDeps->Interface120, 'someMethod'));
     }
+
+    /**
+     * @test
+     * it should allow getting an array of mocked dependencies
+     */
+    public function it_should_allow_getting_an_array_of_mocked_dependencies()
+    {
+        $sut = new tad_DependencyMocker($this, 'Test231');
+        $mockDeps = $sut->setMethod(array('methodTwo', 'methodThree'))
+            ->getMocksArray();
+        $this->assertArrayHasKey('Test119', $mockDeps);
+        $this->assertArrayHasKey('Interface119', $mockDeps);
+        $this->assertArrayHasKey('Interface120', $mockDeps);
+        $this->assertTrue(method_exists($mockDeps['Test119'], 'methodOne'));
+        $this->assertTrue(method_exists($mockDeps['Test119'], 'methodTwo'));
+        $this->assertTrue(method_exists($mockDeps['Test119'], 'methodThree'));
+        $this->assertTrue(method_exists($mockDeps['Interface119'], '__call'));
+        $this->assertTrue(method_exists($mockDeps['Interface120'], 'someMethod'));
+    }
 }

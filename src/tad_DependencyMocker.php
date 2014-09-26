@@ -57,6 +57,35 @@ class tad_DependencyMocker
      */
     public function getMocks()
     {
+        return $this->getMocksObjectOrArray(true);
+    }
+
+    public function getMocksArray()
+    {
+
+        return $this->getMocksObjectOrArray(false);
+    }
+
+    /**
+     * Sets one or more methods to be mocked.
+     *
+     * @param $methodName
+     * @return $this
+     */
+    public function setMethod($methodName)
+    {
+        if (!is_string($methodName) && !is_array($methodName)) {
+            throw new InvalidArgumentException('Method name must be a string or an array', 1);
+        }
+        $this->methodName = $methodName;
+        return $this;
+    }
+
+    /**
+     * @return stdClass
+     */
+    protected function getMocksObjectOrArray($getObject = true)
+    {
         $notation = $this->notation ? '@' . $this->notation : '@depends';
         $methods = is_array($this->methodName) ? $this->methodName : array($this->methodName);
         $mockables = array();
@@ -74,25 +103,17 @@ class tad_DependencyMocker
                 }
             }
         }
-        $mocks = new stdClass();
-        foreach ($mockables as $mockable) {
-            $mocks->$mockable = $this->testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
+        if ($getObject) {
+            $mocks = new stdClass();
+            foreach ($mockables as $mockable) {
+                $mocks->$mockable = $this->testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
+            }
+        } else {
+            $mocks = array();
+            foreach ($mockables as $mockable) {
+                $mocks[$mockable] = $this->testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
+            }
         }
         return $mocks;
-    }
-
-    /**
-     * Sets one or more methods to be mocked.
-     *
-     * @param $methodName
-     * @return $this
-     */
-    public function setMethod($methodName)
-    {
-        if (!is_string($methodName) && !is_array($methodName)) {
-            throw new InvalidArgumentException('Method name must be a string or an array', 1);
-        }
-        $this->methodName = $methodName;
-        return $this;
     }
 }
