@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Class tad_DependencyMocker
+ *
+ * Mocks method dependencies. The supposed workflow is
+ *
+ *     $mocker = new tad_DependencyMocker($this, $className);
+ *     $mockedDependencies = $mocker->setMethods(array('methodOne, methodTwo));
+ *
+ *     // set expectations and return values on mocked objects
+ *     $mockedDependencies->DependencyOne->expects(...
+ */
 class tad_DependencyMocker
 {
     protected $testCase;
@@ -7,6 +18,10 @@ class tad_DependencyMocker
     protected $methodName;
     protected $notation;
 
+    /**
+     * @param PHPUnit_Framework_TestCase $testCase
+     * @param $className
+     */
     public function __construct(PHPUnit_Framework_TestCase $testCase, $className)
     {
         if (!is_string($className)) {
@@ -19,12 +34,27 @@ class tad_DependencyMocker
         $this->className = $className;
     }
 
+    /**
+     * Sets the notation to be used to pick up a method dependencies.
+     *
+     * By default the "depends" notation will be used.
+     *
+     * @param $notation
+     * @return $this
+     */
     public function setNotation($notation)
     {
         $this->notation = $notation;
         return $this;
     }
 
+    /**
+     * Returns an object defining each mocked dependency as a property.
+     *
+     * The property name is the same as the mocked class name.
+     *
+     * @return stdClass
+     */
     public function getMocks()
     {
         $notation = $this->notation ? '@' . $this->notation : '@depends';
@@ -51,6 +81,12 @@ class tad_DependencyMocker
         return $mocks;
     }
 
+    /**
+     * Sets one or more methods to be mocked.
+     *
+     * @param $methodName
+     * @return $this
+     */
     public function setMethod($methodName)
     {
         if (!is_string($methodName) && !is_array($methodName)) {

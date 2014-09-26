@@ -1,8 +1,26 @@
 <?php
 
-
+/**
+ * Class tad_TestableObject
+ *
+ * A class that's meant to be used as a parent class for objects developed using TDD techniques.
+ */
 abstract class tad_TestableObject
 {
+    /**
+     * Gets the mocked dependencies for one or more of the class public methods.
+     *
+     * The extending class is required to define valid doc blocks
+     * for each public method that's meant to have its dependencies
+     * mocked using the "@depends" notation.
+     * See tad_DependencyMocker class for more in-detail information.
+     *
+     *      * @depends A, B, CInterface
+     *
+     * @param PHPUnit_Framework_TestCase $testCase
+     * @param $methodName
+     * @return stdClass
+     */
     public static function getMocksFor(PHPUnit_Framework_TestCase $testCase, $methodName)
     {
         if (!is_string($methodName)) {
