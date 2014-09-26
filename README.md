@@ -64,81 +64,82 @@ and then in the test file
     }
 
 ## Testable objects
-The <code>abstract</code> class <code>tad_TestableObject</code> is meant to be used as a parent class to any class that's meant to be built for testing using the <code>tad_FunctionsAdapter</code> and <code>tad_GlobalsAdapater</code> adapter classes.  
-Once a class extending it is defined in the code
+The <code>abstract</code> class <code>tad_TestableObject</code> is meant to be used as a parent class to any class that's meant to be developed using TDD techniques allowing for quicker mocking of one or more method dependencies. Testing a class like
 
-    class MyObject extends tad_TestableObject{
-        ...
+    class ClassOne{
+
+        protected $d;
+
+        public function __construct(D $d){
+            $this->d = $d;
+        }
+
+        public function methodOne(A $a, BInterface $b, CInterface $c){
+            $a->method();
+            $b->method();
+            $c->method();
+            $this->d->method();
+        }
     }
 
-then the following testing oriented methods will be available to the class:
+would require mocking instances of the <code>A</code> and <code>D</code> classes and the <code>BInterface</code> and <code>CInterface</code> interfaces like
 
-* <code>setFunctionsAdapter</code> and <code>getFunctionsAdapter</code> allows injecting and getting the current global functions adapter
-* <code>setGlobalsAdapter</code> and <code>getGlobalsAdapter</code> allows injecting and getting the current global variables adapter
-* <code>getMockFunctions</code>, a <code>static</code> method, allows getting a <code>tad_FunctionsAdapterInterface</code> mock object tailored on the class methods; specifying a method name, or an array of names, will allow getting a mock with method specific stub methods. The list of <code>tad_FunctionsAdapterInterface</code> methods to stub for each method must be explicitly indicated using the <code>@f</code> notation in the method comment block.
-* <code>getMockGlobals</code>, a <code>static</code> method, allows getting a <code>tad_GlobalsAdapterInterface</code> mock object tailored on the class methods; specifying a method name, or an array of names, will allow getting a mock with method specific stub methods. The list of <code>tad_GlobalsAdapterInterface</code> methods to stub for each method must be explicitly indicated using the <code>@g</code> notation in the method comment block.
+    // file ClassOneTest.php
 
-### Example
-Given a class like
+    public function test_methodOne_will_call_methods(){
+        $mockA = $this->getMock('A', array('method'));
+        $mockBInterface = $this->getMock('BInterface', array('method'));
+        $mockCInterface = $this->getMock('CInterface', array('method'));
+        $mockD = $this->getMock('D', array('method'));
+     
+        $mockA->expects($this->once())->method('method');
+        $mockBInterface->expects($this->once())->method('method');
+        $mockCInterface->expects($this->once())->method('method');
+        $mockD->expects($this->once())->method('method');
 
-    class MyTestableClass extends tad_TestableObject
-    {
+        $sut = new ClassOne($mockD);
+
+        $sut->methodOne();
+    }
+
+The <code>getMocks</code> method defined in the <code>tad_TestableObject</code> class allows, given a DocBlock comments is in place, to rewrite the class to be tested adding DocBlock comments
+
+    class ClassOne extends tad_TestableObject {
+
+        protected $d;
     
         /**
-         * @f functionOne functionTwo
-         * @g server
+         * @depends D
          */
-        public function methodOne()
-        {
-            ...
-            $a = $this->f->functionOne();
-            ...
-            $b = $this->f->functionTwo();
-            ...
-            $c = $this->g->server('some');
+        public function __construct(D $d){
+            $this->d = $d;
         }
 
         /**
-         * @f functionThree functionFour
-         * @g globals
+         * @depends A, BInterface, CInterface
          */
-        public function methodTwo()
-        {
-            ...
-            $a = $this->f->functionThree();
-            ...
-            $b = $this->f->functionFour();
-            ...
-            $c = $this->g->globals('value');
+        public function methodOne(A $a, BInterface $b, CInterface $c){
+            $a->method();
+            $b->method();
+            $c->method();
+            $this->d->method();
         }
     }
 
-the class will use the DocBlock to create *ad hoc* mocks during tests and it's meant to be used inside a <code>PHPUnit_Framework_TestCase</code> class definition
+and to rewrite the test method to
 
-    // $mockF will define the stub methods
-    //    '__call'
-    //    'functionOne'
-    //    'functionTwo'
-    //    'functionThree'
-    //    'functionFour'
-    $mockF = MyTestableClass::getMockFunctions($this);
+    // file ClassOneTest.php
 
-    // $mockG will define the methods
-    //    '__call'
-    //    'server'
-    //    'globals'
-    $mockG = MyTestableClass::getMockGlobals($this);
+    public function test_methodOne_will_call_methods(){
 
-those stubs will then be configurable as any test double produced using the <code>PHPUnit_Framework_TestCase::getMock()</code> method.  
-Specifying a method name, or an array of method names, will produce a mock stubbing adapter methods used in the specified methods alone
+        $mockedDependencies = ClassOne::getMocksFor($this, array('__construct', 'methodOne'))     
 
-    // $mockF will define the stub methods
-    //    '__call'
-    //    'functionOne'
-    //    'functionTwo'
-    $mockF = MyTestableClass::getMockFunctions($this, 'methodOne');
+        $mockDependencies->A->expects($this->once())->method('method');
+        $mockDependencies->BInterface->expects($this->once())->method('method');
+        $mockDependencies->CInterface->expects($this->once())->method('method');
+        $mockDependencies->D->expects($this->once())->method('method');
 
-    // $mockG will define the methods
-    //    '__call'
-    //    'server'
-    $mockG = MyTestableClass::getMockGlobals($this, 'methodOne');
+        $sut = new ClassOne($mockD);
+
+        $sut->methodOne();
+    }
