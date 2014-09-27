@@ -161,3 +161,48 @@ alternatively mocks can be retrieved in an array using the <code>getMocksArrayFo
 
         $sut->methodOne();
     }
+
+## tad_DependencyMocker
+All of the above mocking is possible on classes not extending the <code>tad_TestableObject</code> class as well using the <code>tad_DependencyMocker</code> class. Given a class has its DocBlocks set up as above but it's not extending the <code>tad_TestableObject</code> class:
+
+    class ClassOne {
+
+        protected $d;
+    
+        /**
+         * @depends D
+         */
+        public function __construct(D $d){
+            $this->d = $d;
+        }
+
+        /**
+         * @depends A, BInterface, CInterface
+         */
+        public function methodOne(A $a, BInterface $b, CInterface $c){
+            $a->method();
+            $b->method();
+            $c->method();
+            $this->d->method();
+        }
+    }
+
+Then its method dependencies can still be mocked like
+
+    // file ClassOneTest.php
+
+    public function test_methodOne_will_call_methods(){
+
+        extract(tad_DependencyMocker::on('ClassOne')
+            ->forMethods(array('__construct', 'methodOne'))
+            ->getMocksArray());
+
+        $A->expects($this->once())->method('method');
+        $BInterface->expects($this->once())->method('method');
+        $CInterface->expects($this->once())->method('method');
+        $D->expects($this->once())->method('method');
+
+        $sut = new ClassOne($D);
+
+        $sut->methodOne();
+    }
