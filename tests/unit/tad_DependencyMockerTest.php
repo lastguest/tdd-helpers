@@ -269,5 +269,15 @@ namespace {
             $this->assertNotNull($Interface119);
             $this->assertNotNull($Interface120);
         }
+
+        /**
+         * @test
+         * it should allow getting an instance of the class using the on static method
+         */
+        public
+        function it_should_allow_getting_an_instance_of_the_class_using_the_on_static_method()
+        {
+            $this->assertInstanceOf('tad_DependencyMocker', \tad_DependencyMocker::on('stdClass'));
+        }
     }
 }

@@ -121,6 +121,17 @@ class tad_DependencyMocker
         }
         return $mocks;
     }
+
+    /**
+     * Static constructor method for the class.
+     *
+     * @param $className
+     * @return tad_DependencyMocker
+     */
+    public static function on($className)
+    {
+        return new self($className);
+    }
 }
 
 /**
@@ -129,6 +140,7 @@ class tad_DependencyMocker
  * Just an extension of the PHPUnit_Framework_TestCase class
  * to allow for method mocks creation.
  */
-class tad_SpoofTestCase extends PHPUnit_Framework_TestCase{
+class tad_SpoofTestCase extends PHPUnit_Framework_TestCase
+{
 
 }
