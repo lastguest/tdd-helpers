@@ -64,10 +64,10 @@ abstract class tad_TestableObject
         }
         $mocker = new tad_DependencyMocker($className);
         if ($returnObject) {
-            return $mocker->setMethods($methodName)
+            return $mocker->forMethods($methodName)
                 ->getMocks();
         } else {
-            return $mocker->setMethods($methodName)
+            return $mocker->forMethods($methodName)
                 ->getMocksArray();
         }
     }

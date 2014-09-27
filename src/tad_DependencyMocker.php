@@ -6,7 +6,7 @@
  * Mocks method dependencies. The supposed workflow is
  *
  *     $mocker = new tad_DependencyMocker($this, $className);
- *     $mockedDependencies = $mocker->setMethods(array('methodOne, methodTwo));
+ *     $mockedDependencies = $mocker->forMethods(array('methodOne, methodTwo));
  *
  *     // set expectations and return values on mocked objects
  *     $mockedDependencies->DependencyOne->expects(...
@@ -73,15 +73,15 @@ class tad_DependencyMocker
     /**
      * Sets one or more methods to be mocked.
      *
-     * @param $methodName
+     * @param $methodNameOrArray
      * @return $this
      */
-    public function setMethods($methodName)
+    public function forMethods($methodNameOrArray)
     {
-        if (!is_string($methodName) && !is_array($methodName)) {
+        if (!is_string($methodNameOrArray) && !is_array($methodNameOrArray)) {
             throw new InvalidArgumentException('Method name must be a string or an array', 1);
         }
-        $this->methodName = $methodName;
+        $this->methodName = $methodNameOrArray;
         return $this;
     }
 
