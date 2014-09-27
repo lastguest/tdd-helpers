@@ -132,14 +132,32 @@ and to rewrite the test method to
 
     public function test_methodOne_will_call_methods(){
 
-        $mockedDependencies = ClassOne::getMocksFor($this, array('__construct', 'methodOne'))     
+        $mockedDependencies = ClassOne::getMocksFor(array('__construct', 'methodOne'))     
 
         $mockDependencies->A->expects($this->once())->method('method');
         $mockDependencies->BInterface->expects($this->once())->method('method');
         $mockDependencies->CInterface->expects($this->once())->method('method');
         $mockDependencies->D->expects($this->once())->method('method');
 
-        $sut = new ClassOne($mockD);
+        $sut = new ClassOne($mockedDependencies->$mockD);
+
+        $sut->methodOne();
+    }
+
+alternatively mocks can be retrieved in an array using the <code>getMocksArrayFor</code> method like
+
+    // file ClassOneTest.php
+
+    public function test_methodOne_will_call_methods(){
+
+        extract(ClassOne::getMocksArrayFor(array('__construct', 'methodOne')));
+
+        $A->expects($this->once())->method('method');
+        $BInterface->expects($this->once())->method('method');
+        $CInterface->expects($this->once())->method('method');
+        $D->expects($this->once())->method('method');
+
+        $sut = new ClassOne($D);
 
         $sut->methodOne();
     }

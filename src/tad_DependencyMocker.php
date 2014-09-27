@@ -13,7 +13,6 @@
  */
 class tad_DependencyMocker
 {
-    protected $testCase;
     protected $className;
     protected $methodName;
     protected $notation;
@@ -22,7 +21,7 @@ class tad_DependencyMocker
      * @param PHPUnit_Framework_TestCase $testCase
      * @param $className
      */
-    public function __construct(PHPUnit_Framework_TestCase $testCase, $className)
+    public function __construct($className)
     {
         if (!is_string($className)) {
             throw new InvalidArgumentException('Class name must be a string', 1);
@@ -30,7 +29,6 @@ class tad_DependencyMocker
         if (!class_exists($className)) {
             throw new InvalidArgumentException("Class $className does not exisit", 2);
         }
-        $this->testCase = $testCase;
         $this->className = $className;
     }
 
@@ -60,9 +58,15 @@ class tad_DependencyMocker
         return $this->getMocksObjectOrArray(true);
     }
 
+    /**
+     * Returns an array containing the mocked dependencies.
+     *
+     * The array format is ['ClassName' => mock].
+     *
+     * @return array
+     */
     public function getMocksArray()
     {
-
         return $this->getMocksObjectOrArray(false);
     }
 
@@ -82,7 +86,7 @@ class tad_DependencyMocker
     }
 
     /**
-     * @return stdClass
+     * @return stdClass/array
      */
     protected function getMocksObjectOrArray($getObject = true)
     {
@@ -103,17 +107,28 @@ class tad_DependencyMocker
                 }
             }
         }
+        $testCase = new tad_SpoofTestCase();
         if ($getObject) {
             $mocks = new stdClass();
             foreach ($mockables as $mockable) {
-                $mocks->$mockable = $this->testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
+                $mocks->$mockable = $testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
             }
         } else {
             $mocks = array();
             foreach ($mockables as $mockable) {
-                $mocks[$mockable] = $this->testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
+                $mocks[$mockable] = $testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
             }
         }
         return $mocks;
     }
+}
+
+/**
+ * Class tad_SpoofTestCase
+ *
+ * Just an extension of the PHPUnit_Framework_TestCase class
+ * to allow for method mocks creation.
+ */
+class tad_SpoofTestCase extends PHPUnit_Framework_TestCase{
+
 }

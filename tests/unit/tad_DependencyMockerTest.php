@@ -80,7 +80,7 @@ class tad_DependencyMockerTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_getting_an_array_of_all_mocked_constructor_dependencies()
     {
-        $sut = new tad_DependencyMocker($this, 'Test231');
+        $sut = new tad_DependencyMocker( 'Test231');
         $mockDeps = $sut->setMethods('__construct')
             ->getMocks();
         $this->assertObjectHasAttribute('Test119', $mockDeps);
@@ -97,7 +97,7 @@ class tad_DependencyMockerTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_getting_an_array_of_all_mocked_method_dependencies()
     {
-        $sut = new tad_DependencyMocker($this, 'Test231');
+        $sut = new tad_DependencyMocker( 'Test231');
         $mockDeps = $sut->setMethods('methodOne')
             ->getMocks();
         $this->assertObjectHasAttribute('Test119', $mockDeps);
@@ -114,7 +114,7 @@ class tad_DependencyMockerTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_mocking_interface_dependencies_with_magic_methods()
     {
-        $sut = new tad_DependencyMocker($this, 'Test231');
+        $sut = new tad_DependencyMocker( 'Test231');
         $mockDeps = $sut->setMethods('methodTwo')
             ->getMocks();
         $this->assertObjectHasAttribute('Test119', $mockDeps);
@@ -131,7 +131,7 @@ class tad_DependencyMockerTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_setting_expectations_on_returned_methods()
     {
-        $sut = new tad_DependencyMocker($this, 'Test231');
+        $sut = new tad_DependencyMocker( 'Test231');
         $mockDeps = $sut->setMethods('methodThree')
             ->getMocks();
         $mockDeps->Test119->expects($this->once())
@@ -148,7 +148,7 @@ class tad_DependencyMockerTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_setting_return_values_on_returned_methods()
     {
-        $sut = new tad_DependencyMocker($this, 'Test231');
+        $sut = new tad_DependencyMocker( 'Test231');
         $mockDeps = $sut->setMethods('methodThree')
             ->getMocks();
         $mockDeps->Test119->expects($this->once())
@@ -167,7 +167,7 @@ class tad_DependencyMockerTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_mocking_dependencies_for_multiple_methods_passing_an_array()
     {
-        $sut = new tad_DependencyMocker($this, 'Test231');
+        $sut = new tad_DependencyMocker( 'Test231');
         $mockDeps = $sut->setMethods(array('methodTwo', 'methodThree'))
             ->getMocks();
         $this->assertObjectHasAttribute('Test119', $mockDeps);
@@ -186,7 +186,7 @@ class tad_DependencyMockerTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_getting_an_array_of_mocked_dependencies()
     {
-        $sut = new tad_DependencyMocker($this, 'Test231');
+        $sut = new tad_DependencyMocker( 'Test231');
         $mockDeps = $sut->setMethods(array('methodTwo', 'methodThree'))
             ->getMocksArray();
         $this->assertArrayHasKey('Test119', $mockDeps);
@@ -205,7 +205,7 @@ class tad_DependencyMockerTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_extracting_mocked_dependencies()
     {
-        $sut = new tad_DependencyMocker($this, 'Test231');
+        $sut = new tad_DependencyMocker( 'Test231');
         $mockDeps = $sut->setMethods(array('methodTwo', 'methodThree'))
             ->getMocksArray();
         extract($mockDeps);
