@@ -279,5 +279,19 @@ namespace {
         {
             $this->assertInstanceOf('tad_DependencyMocker', \tad_DependencyMocker::on('stdClass'));
         }
+
+        /**
+         * @test
+         * it should allow mocking the constructor method by defatult if no methods are set
+         */
+        public function it_should_allow_mocking_the_constructor_method_by_defatult_if_no_methods_are_set()
+        {
+            $sut = new tad_DependencyMocker('\some\vendor\Test231');
+            $mockDeps = $sut->getMocksArray();
+            extract($mockDeps);
+            $this->assertNotNull($Test119);
+            $this->assertFalse(isset($Interface119));
+            $this->assertNotNull($Interface120);
+        }
     }
 }

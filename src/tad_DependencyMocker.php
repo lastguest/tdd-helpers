@@ -91,7 +91,11 @@ class tad_DependencyMocker
     protected function getMocksObjectOrArray($getObject = true)
     {
         $notation = $this->notation ? '@' . $this->notation : '@depends';
-        $methods = is_array($this->methodName) ? $this->methodName : array($this->methodName);
+        if (!isset($this->methodName)) {
+            $methods = array('__construct');
+        } else {
+            $methods = is_array($this->methodName) ? $this->methodName : array($this->methodName);
+        }
         $mockables = array();
         foreach ($methods as $method) {
             $reflector = new ReflectionMethod($this->className, $method);
