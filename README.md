@@ -206,3 +206,13 @@ Then its method dependencies can still be mocked like
 
         $sut->methodOne();
     }
+
+### Methods
+The class defines the following methods:
+
+* <code>on($className)</code> - static, returns an instance of the class based on the specified class.
+* <code>__construct($className)</code> - static, creates an instance of the class based on the specified class.
+* <code>setNotation($notation)</code> - sets the notation to be used for reading method meta information from the documentation block, by default the notation used is "depends"
+* <code>forMethods($methodNameOrArray)</code> - sets the method or methods to be mocked by the class
+* <code>getMocks()</code> - gets a <code>stdClass</code> object defining each dependency as a property acessible via the property "->" notation.
+* <code>getMocksArray()</code> - gets an array containing each mocked dependency in a key/value pair.
