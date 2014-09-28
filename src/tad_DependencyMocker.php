@@ -50,6 +50,8 @@ class tad_DependencyMocker
      * Returns an object defining each mocked dependency as a property.
      *
      * The property name is the same as the mocked class name.
+     * If no method names are specified using the "forMethods" 
+     * method then the "__construct" method will be mocked.
      *
      * @return stdClass
      */
@@ -61,7 +63,9 @@ class tad_DependencyMocker
     /**
      * Returns an array containing the mocked dependencies.
      *
-     * The array format is ['ClassName' => mock].
+     * The array format is ['ClassName' => mock]. If no method
+     * names are specified using the "forMethods" method then
+     * the "__construct" method will be mocked.
      *
      * @return array
      */
