@@ -16,13 +16,15 @@ class tad_DependencyMocker
     protected $className;
     protected $methodName;
     protected $notation;
-    protected $stubs;
+    protected $methods;
 
     /**
-     * @param PHPUnit_Framework_TestCase $testCase
-     * @param $className
+     * @param $className The class that should have its dependencies mocked.
+     * @param null $methodNameOrArray The methods to mock the dependencies of.
+     * @param array $methods An associative array of class/methods that should be explicitly mocked.
+     * @param string $notation The notation to use to parse method dependencies.
      */
-    public function __construct($className)
+    public function __construct($className, $methodNameOrArray = null, array $methods = null, $notation = 'depends')
     {
         if (!is_string($className)) {
             throw new InvalidArgumentException('Class name must be a string', 1);
@@ -31,6 +33,15 @@ class tad_DependencyMocker
             throw new InvalidArgumentException("Class $className does not exisit", 2);
         }
         $this->className = $className;
+        if (isset($methodNameOrArray)) {
+            $this->forMethods($methodNameOrArray);
+        }
+        if (isset($methods)) {
+            $this->setMethods($methods);
+        }
+        if (isset($notation)) {
+            $this->setNotation($notation);
+        }
     }
 
     /**
@@ -118,7 +129,7 @@ class tad_DependencyMocker
         }
 
         $methods = array();
-        $stubsForClasses = $this->stubs ? $this->stubs : array();
+        $stubsForClasses = $this->methods ? $this->methods : array();
         array_map(function ($class) use (&$methods, $stubsForClasses) {
             $reflector = new ReflectionClass($class);
             $definedMethods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -147,6 +158,9 @@ class tad_DependencyMocker
     /**
      * Static constructor method for the class.
      *
+     * The method is will acccept the same parameters as the `__construct`
+     * method and is meant as a fluent chain start.
+     *
      * @param $className
      * @return tad_DependencyMocker
      */
@@ -172,7 +186,7 @@ class tad_DependencyMocker
      */
     public function setMethods(array $methods)
     {
-        $this->stubs = $methods;
+        $this->methods = $methods;
         return $this;
     }
 }
