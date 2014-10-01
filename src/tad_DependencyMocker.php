@@ -20,7 +20,7 @@ class tad_DependencyMocker
 
     /**
      * @param $className The class that should have its dependencies mocked.
-     * @param null $methodNameOrArray The methods to mock the dependencies of.
+     * @param string/array $methodNameOrArray The methods to mock the dependencies of.
      * @param array $methods An associative array of class/methods that should be explicitly mocked.
      * @param string $notation The notation to use to parse method dependencies.
      */
@@ -161,10 +161,13 @@ class tad_DependencyMocker
      * The method is will acccept the same parameters as the `__construct`
      * method and is meant as a fluent chain start.
      *
-     * @param $className
+     * @param $className The class that should have its dependencies mocked.
+     * @param string/array $methodNameOrArray The methods to mock the dependencies of.
+     * @param array $methods An associative array of class/methods that should be explicitly mocked.
+     * @param string $notation The notation to use to parse method dependencies.
      * @return tad_DependencyMocker
      */
-    public static function on($className)
+    public static function on($className, $methodNameOrArray = null, array $methods = null, $notation = 'depends')
     {
         return new self($className);
     }
