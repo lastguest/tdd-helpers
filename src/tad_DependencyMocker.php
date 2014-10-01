@@ -155,7 +155,13 @@ class tad_DependencyMocker
         return new self($className);
     }
 
-    public function stub(array $methods)
+    /**
+     *
+     *
+     * @param array $methods
+     * @return $this
+     */
+    public function setMethods(array $methods)
     {
         $this->stubs = $methods;
         return $this;
