@@ -16,15 +16,15 @@ class tad_DependencyMocker
     protected $className;
     protected $methodName;
     protected $notation;
-    protected $methods;
+    protected $extraMethods;
 
     /**
      * @param $className The class that should have its dependencies mocked.
      * @param string/array $methodNameOrArray The methods to mock the dependencies of.
-     * @param array $methods An associative array of class/methods that should be explicitly mocked.
+     * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
      * @param string $notation The notation to use to parse method dependencies.
      */
-    public function __construct($className, $methodNameOrArray = null, array $methods = null, $notation = 'depends')
+    public function __construct($className, $methodNameOrArray = null, array $extraMethods = null, $notation = 'depends')
     {
         if (!is_string($className)) {
             throw new InvalidArgumentException('Class name must be a string', 1);
@@ -129,7 +129,7 @@ class tad_DependencyMocker
         }
 
         $methods = array();
-        $stubsForClasses = $this->methods ? $this->methods : array();
+        $stubsForClasses = $this->extraMethods ? $this->extraMethods : array();
         array_map(function ($class) use (&$methods, $stubsForClasses) {
             $reflector = new ReflectionClass($class);
             $definedMethods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -163,11 +163,11 @@ class tad_DependencyMocker
      *
      * @param $className The class that should have its dependencies mocked.
      * @param string/array $methodNameOrArray The methods to mock the dependencies of.
-     * @param array $methods An associative array of class/methods that should be explicitly mocked.
+     * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
      * @param string $notation The notation to use to parse method dependencies.
      * @return tad_DependencyMocker
      */
-    public static function on($className, $methodNameOrArray = null, array $methods = null, $notation = 'depends')
+    public static function on($className, $methodNameOrArray = null, array $extraMethods = null, $notation = 'depends')
     {
         return new self($className);
     }
@@ -187,9 +187,9 @@ class tad_DependencyMocker
      * @param array $methods a className to array of methods associative array.
      * @return $this
      */
-    public function setMethods(array $methods)
+    public function setExtraMethods(array $methods)
     {
-        $this->methods = $methods;
+        $this->extraMethods = $methods;
         return $this;
     }
 }
