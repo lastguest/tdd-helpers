@@ -16,13 +16,15 @@ class tad_DependencyMocker
     protected $className;
     protected $methodName;
     protected $notation;
-    protected $stubs;
+    protected $extraMethods;
 
     /**
-     * @param PHPUnit_Framework_TestCase $testCase
-     * @param $className
+     * @param $className The class that should have its dependencies mocked.
+     * @param string/array $methodNameOrArray The methods to mock the dependencies of.
+     * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
+     * @param string $notation The notation to use to parse method dependencies.
      */
-    public function __construct($className)
+    public function __construct($className, $methodNameOrArray = null, array $extraMethods = null, $notation = 'depends')
     {
         if (!is_string($className)) {
             throw new InvalidArgumentException('Class name must be a string', 1);
@@ -31,6 +33,15 @@ class tad_DependencyMocker
             throw new InvalidArgumentException("Class $className does not exisit", 2);
         }
         $this->className = $className;
+        if (isset($methodNameOrArray)) {
+            $this->forMethods($methodNameOrArray);
+        }
+        if (isset($methods)) {
+            $this->setMethods($methods);
+        }
+        if (isset($notation)) {
+            $this->setNotation($notation);
+        }
     }
 
     /**
@@ -118,7 +129,7 @@ class tad_DependencyMocker
         }
 
         $methods = array();
-        $stubsForClasses = $this->stubs ? $this->stubs : array();
+        $stubsForClasses = $this->extraMethods ? $this->extraMethods : array();
         array_map(function ($class) use (&$methods, $stubsForClasses) {
             $reflector = new ReflectionClass($class);
             $definedMethods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -147,17 +158,38 @@ class tad_DependencyMocker
     /**
      * Static constructor method for the class.
      *
-     * @param $className
+     * The method is will acccept the same parameters as the `__construct`
+     * method and is meant as a fluent chain start.
+     *
+     * @param $className The class that should have its dependencies mocked.
+     * @param string/array $methodNameOrArray The methods to mock the dependencies of.
+     * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
+     * @param string $notation The notation to use to parse method dependencies.
      * @return tad_DependencyMocker
      */
-    public static function on($className)
+    public static function on($className, $methodNameOrArray = null, array $extraMethods = null, $notation = 'depends')
     {
         return new self($className);
     }
 
-    public function stub(array $methods)
+    /**
+     * Sets the methods to be explicitly stubbed.
+     *
+     * The method is useful when stubbing classes that rely on magic methods
+     * and that will, hence, expose no public methods. The array to is in the
+     * format
+     *
+     *      [
+     *          'ClassName' => ['methodOne', 'methodTwo', 'methodThree'],
+     *          'ClassName2' => ['methodOne', 'methodTwo', 'methodThree']
+     *      ]
+     *
+     * @param array $extraMethods a className to array of methods associative array.
+     * @return $this
+     */
+    public function setExtraMethods(array $extraMethods)
     {
-        $this->stubs = $methods;
+        $this->extraMethods = $extraMethods;
         return $this;
     }
 }

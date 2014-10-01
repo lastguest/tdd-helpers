@@ -192,14 +192,23 @@ Then its method dependencies can still be mocked like
     // file ClassOneTest.php
 
     public function test_methodOne_will_call_methods(){
+    
+        $extraMethods = array(
+                'BInterface' => array('fooMethod', 'bazMethod'),
+                'CInterface' => array('barMethod')
+            );
 
         extract(tad_DependencyMocker::on('ClassOne')
             ->forMethods(array('__construct', 'methodOne'))
+            ->setExtraMethods($extraMethods)
             ->getMocksArray());
 
         $A->expects($this->once())->method('method');
         $BInterface->expects($this->once())->method('method');
+        $BInterface->expects($this->once())->method('fooMethod');
+        $BInterface->expects($this->once())->method('bazMethod');
         $CInterface->expects($this->once())->method('method');
+        $CInterface->expects($this->once())->method('barMethod');
         $D->expects($this->once())->method('method');
 
         $sut = new ClassOne($D);
@@ -210,9 +219,10 @@ Then its method dependencies can still be mocked like
 ### Methods
 The class defines the following methods:
 
-* <code>on($className)</code> - static, returns an instance of the class based on the specified class.
-* <code>__construct($className)</code> - static, creates an instance of the class based on the specified class.
-* <code>setNotation($notation)</code> - sets the notation to be used for reading method meta information from the documentation block, by default the notation used is "depends"
+* <code>__construct($className, $methodNameOrArray, $extraMethods, $notation)</code> - static, returns an instance of the class based on the specified class; aside for the <code>$className</code> all other arguments can be set later.
+* <code>on($className, $methodNameOrArray, $extraMethods, $notation)</code> - static, returns an instance of the class based on the specified class; aside for the <code>$className</code> all other arguments can be set later.
 * <code>forMethods($methodNameOrArray)</code> - sets the method or methods to be mocked by the class
+* <code>setNotation($notation)</code> - sets the notation to be used for reading method meta information from the documentation block, by default the notation used is "depends"
+* <code>setExtraMethods($extraMethods)</code> - sets an array of class/methods to be stubbed beside the ones the class already defines; in the example above <code>BInterface</code> gets two stubbed extra methods, <code>fooMethod</code> and <code>bazMethod</code> it would not implement.
 * <code>getMocks()</code> - gets a <code>stdClass</code> object defining each dependency as a property acessible via the property "->" notation.
 * <code>getMocksArray()</code> - gets an array containing each mocked dependency in a key/value pair.

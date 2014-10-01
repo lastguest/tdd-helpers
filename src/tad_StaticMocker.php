@@ -21,15 +21,15 @@
  *     {
  *         public function test_calls_static_class()
  *         {
- *             // Create a stub for the SomeClass class.
- *             $stub = $this->getMock('SomeClass');
+ *             // Create a setMethods for the SomeClass class.
+ *             $setMethods = $this->getMock('SomeClass');
  *
- *             // Configure the stub.
- *             $stub->expects($this->any())
+ *             // Configure the setMethods.
+ *             $setMethods->expects($this->any())
  *                 ->method('doSomething')
  *                 ->will($this->returnValue('foo'));
  *
- *             StaticClass::_setListener($stub);
+ *             StaticClass::_setListener($setMethods);
  *
  *             $sut = new ClassName('some', 'var', '\StaticClass');
  *         }

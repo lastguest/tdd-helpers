@@ -316,7 +316,7 @@ namespace {
                 'Interface119' => ['one', 'two', 'three']
             ];
             $sut = new \tad_DependencyMocker('\some\vendor\Test231');
-            extract($sut->forMethods('methodTwo')->stub($toStub)->getMocksArray());
+            extract($sut->forMethods('methodTwo')->setExtraMethods($toStub)->getMocksArray());
             $this->assertNotNull($Test119);
             $this->assertNotNull($Interface119);
             $this->assertTrue(method_exists($Interface119, '__call'));
@@ -336,7 +336,7 @@ namespace {
                 'Test119' => ['four', 'five']
             ];
             $sut = new \tad_DependencyMocker('\some\vendor\Test231');
-            extract($sut->forMethods('methodTwo')->stub($toStub)->getMocksArray());
+            extract($sut->forMethods('methodTwo')->setExtraMethods($toStub)->getMocksArray());
             $this->assertNotNull($Test119);
             $this->assertNotNull($Interface119);
             $this->assertTrue(method_exists($Interface119, '__call'));
@@ -349,15 +349,15 @@ namespace {
 
         /**
          * @test
-         * it should allow addint stub method to classes that have no explicitly defined methods at all
+         * it should allow addint extra methods method to classes that have no explicitly defined methods at all
          */
-        public function it_should_allow_addint_stub_method_to_classes_that_have_no_explicitly_defined_methods_at_all()
+        public function it_should_allow_adding_extra_methods_to_classes_that_have_no_explicitly_defined_methods_at_all()
         {
             $toStub = [
                 'InterfaceNoMethods' => ['one', 'two', 'three']
             ];
             $sut = new \tad_DependencyMocker('\some\vendor\Test231');
-            extract($sut->forMethods('methodFour')->stub($toStub)->getMocksArray());
+            extract($sut->forMethods('methodFour')->setExtraMethods($toStub)->getMocksArray());
             $this->assertNotNull($InterfaceNoMethods);
             $this->assertTrue(method_exists($InterfaceNoMethods, 'one'));
             $this->assertTrue(method_exists($InterfaceNoMethods, 'two'));
@@ -366,15 +366,15 @@ namespace {
 
         /**
          * @test
-         * it should allow defining duplicated stub methods and have no consequences
+         * it should allow defining duplicated extra methods methods and have no consequences
          */
-        public function it_should_allow_defining_duplicated_stub_methods_and_have_no_consequences()
+        public function it_should_allow_defining_duplicated_extra_methods_and_have_no_consequences()
         {
             $toStub = [
                 'Interface120' => ['someMethod', 'two', 'three']
             ];
             $sut = new \tad_DependencyMocker('\some\vendor\Test231');
-            extract($sut->forMethods('methodOne')->stub($toStub)->getMocksArray());
+            extract($sut->forMethods('methodOne')->setExtraMethods($toStub)->getMocksArray());
             $this->assertNotNull($Interface120);
             $this->assertTrue(method_exists($Interface120, 'someMethod'));
             $this->assertTrue(method_exists($Interface120, 'two'));
