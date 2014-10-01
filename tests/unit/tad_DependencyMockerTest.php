@@ -293,5 +293,24 @@ namespace {
             $this->assertFalse(isset($Interface119));
             $this->assertNotNull($Interface120);
         }
+
+        /**
+         * @test
+         * it should allow stubbin non-existing methods explicitly
+         */
+        public function it_should_allow_stubbin_non_existing_methods_explicitly()
+        {
+            $toStub = [
+                'Interface119' => ['one', 'two', 'three']
+            ];
+            $sut = new \tad_DependencyMocker('\some\vendor\Test231');
+            extract($sut->forMethods('methodTwo')->stub($toStub)->getMocksArray());
+            $this->assertNotNull($Test119);
+            $this->assertNotNull($Interface119);
+            $this->assertTrue(method_exists($Interface119, '__call'));
+            $this->assertTrue(method_exists($Interface119, 'one'));
+            $this->assertTrue(method_exists($Interface119, 'two'));
+            $this->assertTrue(method_exists($Interface119, 'three'));
+        }
     }
 }

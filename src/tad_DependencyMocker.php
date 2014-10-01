@@ -16,6 +16,7 @@ class tad_DependencyMocker
     protected $className;
     protected $methodName;
     protected $notation;
+    protected $stubs;
 
     /**
      * @param PHPUnit_Framework_TestCase $testCase
@@ -50,7 +51,7 @@ class tad_DependencyMocker
      * Returns an object defining each mocked dependency as a property.
      *
      * The property name is the same as the mocked class name.
-     * If no method names are specified using the "forMethods" 
+     * If no method names are specified using the "forMethods"
      * method then the "__construct" method will be mocked.
      *
      * @return stdClass
@@ -100,34 +101,47 @@ class tad_DependencyMocker
         } else {
             $methods = is_array($this->methodName) ? $this->methodName : array($this->methodName);
         }
-        $mockables = array();
+        $classes = array();
         foreach ($methods as $method) {
             $reflector = new ReflectionMethod($this->className, $method);
             $docBlock = $reflector->getDocComment();
             $lines = explode("\n", $docBlock);
             foreach ($lines as $line) {
                 if (count($parts = explode($notation, $line)) > 1) {
-                    $classes = trim(preg_replace("/[,;(; )(, )]+/", " ", $parts[1]));
-                    $classes = explode(' ', $classes);
-                    foreach ($classes as $class) {
-                        $mockables[] = $class;
+                    $methodDependencies = trim(preg_replace("/[,;(; )(, )]+/", " ", $parts[1]));
+                    $methodDependencies = explode(' ', $methodDependencies);
+                    foreach ($methodDependencies as $class) {
+                        $classes[] = $class;
                     }
                 }
             }
         }
+
+        $methods = array();
+        $stubsForClasses = $this->stubs ? $this->stubs : array();
+        array_map(function ($class) use (&$methods, $stubsForClasses) {
+            $reflector = new ReflectionClass($class);
+            $definedMethods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
+            $definedMethodNames = array_map(function ($method) {
+                return $method->name;
+            }, $definedMethods);
+            $stubMethods = isset($stubsForClasses[$class]) ? $stubsForClasses[$class] : array();
+            $methods[$class] = array_merge($definedMethodNames, $stubMethods);
+        }, $classes);
+
         $testCase = new tad_SpoofTestCase();
-        if ($getObject) {
-            $mocks = new stdClass();
-            foreach ($mockables as $mockable) {
-                $mocks->$mockable = $testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
-            }
-        } else {
-            $mocks = array();
-            foreach ($mockables as $mockable) {
-                $mocks[$mockable] = $testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
-            }
+        $mocks = new stdClass();
+        foreach ($classes as $class) {
+            $mocks->$class = $testCase
+                ->getMockBuilder($class)
+                ->disableOriginalConstructor()
+                ->setMethods($methods[$class])
+                ->getMock();
         }
-        return $mocks;
+        if ($getObject) {
+            return $mocks;
+        }
+        return (array)$mocks;
     }
 
     /**
@@ -139,6 +153,12 @@ class tad_DependencyMocker
     public static function on($className)
     {
         return new self($className);
+    }
+
+    public function stub(array $methods)
+    {
+        $this->stubs = $methods;
+        return $this;
     }
 }
 
