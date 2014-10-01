@@ -135,7 +135,7 @@ class tad_DependencyMocker
             $mocks->$class = $testCase
                 ->getMockBuilder($class)
                 ->disableOriginalConstructor()
-                ->setMethods($methods[$class])
+                ->setMethods(array_unique($methods[$class]))
                 ->getMock();
         }
         if ($getObject) {
