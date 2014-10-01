@@ -184,12 +184,12 @@ class tad_DependencyMocker
      *          'ClassName2' => ['methodOne', 'methodTwo', 'methodThree']
      *      ]
      *
-     * @param array $methods a className to array of methods associative array.
+     * @param array $extraMethods a className to array of methods associative array.
      * @return $this
      */
-    public function setExtraMethods(array $methods)
+    public function setExtraMethods(array $extraMethods)
     {
-        $this->extraMethods = $methods;
+        $this->extraMethods = $extraMethods;
         return $this;
     }
 }
