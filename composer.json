@@ -12,7 +12,8 @@
         "role": "Developer"
     }],
     "require": {
-        "php": ">=5.2.0"
+        "php": ">=5.2.0",
+        "nikic/php-parser": "~1.0.0"
     },
     "require-dev": {
         "codeception/codeception": "*"
