@@ -16,12 +16,15 @@ class tad_DependencyMocker
     protected $className;
     protected $methodName;
     protected $notation;
+    protected $extraMethods;
 
     /**
-     * @param PHPUnit_Framework_TestCase $testCase
-     * @param $className
+     * @param $className The class that should have its dependencies mocked.
+     * @param string/array $methodNameOrArray The methods to mock the dependencies of.
+     * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
+     * @param string $notation The notation to use to parse method dependencies.
      */
-    public function __construct($className)
+    public function __construct($className, $methodNameOrArray = null, array $extraMethods = null, $notation = 'depends')
     {
         if (!is_string($className)) {
             throw new InvalidArgumentException('Class name must be a string', 1);
@@ -30,6 +33,15 @@ class tad_DependencyMocker
             throw new InvalidArgumentException("Class $className does not exisit", 2);
         }
         $this->className = $className;
+        if (isset($methodNameOrArray)) {
+            $this->forMethods($methodNameOrArray);
+        }
+        if (isset($methods)) {
+            $this->setMethods($methods);
+        }
+        if (isset($notation)) {
+            $this->setNotation($notation);
+        }
     }
 
     /**
@@ -50,7 +62,7 @@ class tad_DependencyMocker
      * Returns an object defining each mocked dependency as a property.
      *
      * The property name is the same as the mocked class name.
-     * If no method names are specified using the "forMethods" 
+     * If no method names are specified using the "forMethods"
      * method then the "__construct" method will be mocked.
      *
      * @return stdClass
@@ -100,45 +112,85 @@ class tad_DependencyMocker
         } else {
             $methods = is_array($this->methodName) ? $this->methodName : array($this->methodName);
         }
-        $mockables = array();
+        $classes = array();
         foreach ($methods as $method) {
             $reflector = new ReflectionMethod($this->className, $method);
             $docBlock = $reflector->getDocComment();
             $lines = explode("\n", $docBlock);
             foreach ($lines as $line) {
                 if (count($parts = explode($notation, $line)) > 1) {
-                    $classes = trim(preg_replace("/[,;(; )(, )]+/", " ", $parts[1]));
-                    $classes = explode(' ', $classes);
-                    foreach ($classes as $class) {
-                        $mockables[] = $class;
+                    $methodDependencies = trim(preg_replace("/[,;(; )(, )]+/", " ", $parts[1]));
+                    $methodDependencies = explode(' ', $methodDependencies);
+                    foreach ($methodDependencies as $class) {
+                        $classes[] = $class;
                     }
                 }
             }
         }
+
+        $methods = array();
+        $stubsForClasses = $this->extraMethods ? $this->extraMethods : array();
+        array_map(function ($class) use (&$methods, $stubsForClasses) {
+            $reflector = new ReflectionClass($class);
+            $definedMethods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
+            $definedMethodNames = array_map(function ($method) {
+                return $method->name;
+            }, $definedMethods);
+            $stubMethods = isset($stubsForClasses[$class]) ? $stubsForClasses[$class] : array();
+            $methods[$class] = array_merge($definedMethodNames, $stubMethods);
+        }, $classes);
+
         $testCase = new tad_SpoofTestCase();
-        if ($getObject) {
-            $mocks = new stdClass();
-            foreach ($mockables as $mockable) {
-                $mocks->$mockable = $testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
-            }
-        } else {
-            $mocks = array();
-            foreach ($mockables as $mockable) {
-                $mocks[$mockable] = $testCase->getMockBuilder($mockable)->disableOriginalConstructor()->getMock();
-            }
+        $mocks = new stdClass();
+        foreach ($classes as $class) {
+            $mocks->$class = $testCase
+                ->getMockBuilder($class)
+                ->disableOriginalConstructor()
+                ->setMethods(array_unique($methods[$class]))
+                ->getMock();
         }
-        return $mocks;
+        if ($getObject) {
+            return $mocks;
+        }
+        return (array)$mocks;
     }
 
     /**
      * Static constructor method for the class.
      *
-     * @param $className
+     * The method is will acccept the same parameters as the `__construct`
+     * method and is meant as a fluent chain start.
+     *
+     * @param $className The class that should have its dependencies mocked.
+     * @param string/array $methodNameOrArray The methods to mock the dependencies of.
+     * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
+     * @param string $notation The notation to use to parse method dependencies.
      * @return tad_DependencyMocker
      */
-    public static function on($className)
+    public static function on($className, $methodNameOrArray = null, array $extraMethods = null, $notation = 'depends')
     {
         return new self($className);
+    }
+
+    /**
+     * Sets the methods to be explicitly stubbed.
+     *
+     * The method is useful when stubbing classes that rely on magic methods
+     * and that will, hence, expose no public methods. The array to is in the
+     * format
+     *
+     *      [
+     *          'ClassName' => ['methodOne', 'methodTwo', 'methodThree'],
+     *          'ClassName2' => ['methodOne', 'methodTwo', 'methodThree']
+     *      ]
+     *
+     * @param array $extraMethods a className to array of methods associative array.
+     * @return $this
+     */
+    public function setExtraMethods(array $extraMethods)
+    {
+        $this->extraMethods = $extraMethods;
+        return $this;
     }
 }
 
