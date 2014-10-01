@@ -156,9 +156,18 @@ class tad_DependencyMocker
     }
 
     /**
+     * Sets the methods to be explicitly stubbed.
      *
+     * The method is useful when stubbing classes that rely on magic methods
+     * and that will, hence, expose no public methods. The array to is in the
+     * format
      *
-     * @param array $methods
+     *      [
+     *          'ClassName' => ['methodOne', 'methodTwo', 'methodThree'],
+     *          'ClassName2' => ['methodOne', 'methodTwo', 'methodThree']
+     *      ]
+     *
+     * @param array $methods a className to array of methods associative array.
      * @return $this
      */
     public function setMethods(array $methods)
