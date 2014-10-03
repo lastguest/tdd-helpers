@@ -18,6 +18,7 @@ class TestClass231
 
     }
 }
+
 class TestClass232
 {
 
@@ -52,7 +53,7 @@ class tad_DependencyMocker_SmartTest extends \PHPUnit_Framework_TestCase
         $deps = ['stdClass' => ['one', 'two', 'three']];
         $methodReader = $this->getMockBuilder('tad_MethodReader')
             ->disableOriginalConstructor()
-            ->setMethods(array('__construct','setMethodName', 'setClassName', 'getDependencies'))
+            ->setMethods(array('__construct', 'setMethodName', 'setClassName', 'getDependencies'))
             ->getMock();
         $methodReader->expects($this->once())
             ->method('getDependencies')
@@ -72,7 +73,7 @@ class tad_DependencyMocker_SmartTest extends \PHPUnit_Framework_TestCase
         $deps = ['stdClass' => ['one', 'two', 'three']];
         $methodReader = $this->getMockBuilder('tad_MethodReader')
             ->disableOriginalConstructor()
-            ->setMethods(array('__construct','setMethodName', 'setClassName', 'getDependencies'))
+            ->setMethods(array('__construct', 'setMethodName', 'setClassName', 'getDependencies'))
             ->getMock();
         $methodReader->expects($this->once())
             ->method('getDependencies')
@@ -98,7 +99,7 @@ class tad_DependencyMocker_SmartTest extends \PHPUnit_Framework_TestCase
         $deps = ['stdClass' => ['one', 'two', 'three']];
         $methodReader = $this->getMockBuilder('tad_MethodReader')
             ->disableOriginalConstructor()
-            ->setMethods(array('__construct','setMethodName', 'setClassName', 'getDependencies'))
+            ->setMethods(array('__construct', 'setMethodName', 'setClassName', 'getDependencies'))
             ->getMock();
         $methodReader->expects($this->once())
             ->method('getDependencies')
@@ -133,7 +134,7 @@ class tad_DependencyMocker_SmartTest extends \PHPUnit_Framework_TestCase
         ];
         $methodReader = $this->getMockBuilder('tad_MethodReader')
             ->disableOriginalConstructor()
-            ->setMethods(array('__construct','setMethodName', 'setClassName', 'getDependencies'))
+            ->setMethods(array('__construct', 'setMethodName', 'setClassName', 'getDependencies'))
             ->getMock();
         $methodReader->expects($this->once())
             ->method('setMethodName')
@@ -145,5 +146,52 @@ class tad_DependencyMocker_SmartTest extends \PHPUnit_Framework_TestCase
         $sut = new tad_DependencyMocker_Smart('TestClass232', array('methodOne'), null, $methodReader);
 
         extract($sut->getMocksArray());
+
+        $this->assertNotNull($dep231);
+        $this->assertInstanceOf('DependencyClass231', $dep231);
+        $this->assertNotNull($int1);
+        $this->assertInstanceOf('Int1', $int1);
+        $this->assertNotNull($one);
+        $this->assertInstanceOf('stdClass', $one);
+        $this->assertNotNull($two);
+        $this->assertInstanceOf('stdClass', $two);
+        $this->assertNotNull($three);
+        $this->assertInstanceOf('stdClass', $three);
+    }
+
+    /**
+     * @test
+     * it should mock constructor dependencies if __construct method is a target method
+     */
+    public function it_should_mock_constructor_dependencies_if_construct_method_is_a_target_method()
+    {
+        $deps = [
+            'DependencyClass231' => ['dep231'],
+            'Int1' => ['int1'],
+            'stdClass' => ['one', 'two', 'three']
+        ];
+        $methodReader = $this->getMockBuilder('tad_MethodReader')
+            ->disableOriginalConstructor()
+            ->setMethods(array('__construct', 'setMethodName', 'setClassName', 'getDependencies'))
+            ->getMock();
+        $methodReader->expects($this->once())
+            ->method('getDependencies')
+            ->will($this->returnValue($deps));
+
+        $sut = new tad_DependencyMocker_Smart('TestClass232', array('__construct', 'methodOne'), null, $methodReader);
+
+        extract($sut->getMocksArray());
+//     public function __construct(DependencyClass231 $dep231, Int1 $int1)
+//     public function methodOne(stdClass $one, stdClass $two, stdClass $three)
+        $this->assertNotNull($dep231);
+        $this->assertInstanceOf('DependencyClass231', $dep231);
+        $this->assertNotNull($int1);
+        $this->assertInstanceOf('Int1', $int1);
+        $this->assertNotNull($one);
+        $this->assertInstanceOf('stdClass', $one);
+        $this->assertNotNull($two);
+        $this->assertInstanceOf('stdClass', $two);
+        $this->assertNotNull($three);
+        $this->assertInstanceOf('stdClass', $three);
     }
 }
