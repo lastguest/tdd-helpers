@@ -9,17 +9,7 @@ interface tad_DependencyMocker
      * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
      * @param string $notation The notation to use to parse method dependencies.
      */
-    public function __construct($className, $methodNameOrArray = null, array $extraMethods = null, $notation = 'depends');
-
-    /**
-     * Sets the notation to be used to pick up a method dependencies.
-     *
-     * By default the "depends" notation will be used.
-     *
-     * @param $notation
-     * @return $this
-     */
-    public function setNotation($notation);
+    public function __construct($className, $methodNameOrArray = null, array $extraMethods = null);
 
     /**
      * Returns an object defining each mocked dependency as a property.
@@ -63,7 +53,7 @@ interface tad_DependencyMocker
      * @param string $notation The notation to use to parse method dependencies.
      * @return tad_DependencyMocker
      */
-    public static function on($className, $methodNameOrArray = null, array $extraMethods = null, $notation = 'depends');
+    public static function on($className, $methodNameOrArray = null, array $extraMethods = null);
 
     /**
      * Sets the methods to be explicitly stubbed.
