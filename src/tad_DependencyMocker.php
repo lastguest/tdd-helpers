@@ -5,7 +5,7 @@ interface tad_DependencyMocker
 
     /**
      * @param $className The class that should have its dependencies mocked.
-     * @param string /array $methodNameOrArray The methods to mock the dependencies of.
+     * @param string /array $targetMethods The methods to mock the dependencies of.
      * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
      * @param string $notation The notation to use to parse method dependencies.
      */
@@ -48,7 +48,7 @@ interface tad_DependencyMocker
      * method and is meant as a fluent chain start.
      *
      * @param $className The class that should have its dependencies mocked.
-     * @param string /array $methodNameOrArray The methods to mock the dependencies of.
+     * @param string /array $targetMethods The methods to mock the dependencies of.
      * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
      * @param string $notation The notation to use to parse method dependencies.
      * @return tad_DependencyMocker
