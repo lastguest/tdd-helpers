@@ -140,7 +140,7 @@ class tad_DependencyDocMocker implements tad_DependencyMocker
             $methods[$class] = array_merge($definedMethodNames, $stubMethods);
         }, $classes);
 
-        $testCase = new tad_SpoofTestCase();
+        $testCase = new tad_TestCase();
         $mocks = new stdClass();
         foreach ($classes as $class) {
             $mocks->$class = $testCase
@@ -194,13 +194,3 @@ class tad_DependencyDocMocker implements tad_DependencyMocker
     }
 }
 
-/**
- * Class tad_SpoofTestCase
- *
- * Just an extension of the PHPUnit_Framework_TestCase class
- * to allow for method mocks creation.
- */
-class tad_SpoofTestCase extends PHPUnit_Framework_TestCase
-{
-
-}
