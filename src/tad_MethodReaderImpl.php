@@ -1,7 +1,5 @@
 <?php
 
-use PhpParser\Lexer;
-use PhpParser\Parser;
 
 class tad_MethodReaderImpl implements tad_MethodReader
 {
@@ -22,10 +20,15 @@ class tad_MethodReaderImpl implements tad_MethodReader
             $params = $method->getParameters();
             foreach ($params as $param) {
                 $class = $param->getClass()->getName();
-                $dependencies[$class] = isset($dependencies[$class]) ?: array();
+                if (!isset($dependencies[$class])) {
+                    $dependencies[$class] = array();
+                }
                 $dependencies[$class][] = $param->getName();
             }
         }
+        $dependencies = array_map(function ($arr) {
+            return array_unique($arr);
+        }, $dependencies);
         return $dependencies;
     }
 }
