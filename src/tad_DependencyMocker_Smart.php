@@ -3,7 +3,7 @@
 class tad_DependencyMocker_Smart implements tad_DependencyMocker
 {
     protected $className;
-    protected $methodNameOrArray;
+    protected $targetMethods;
     protected $extraMethods;
     protected $methodReader;
 
@@ -57,7 +57,7 @@ class tad_DependencyMocker_Smart implements tad_DependencyMocker
         if (!is_array($methodNameOrArray) && !is_string($methodNameOrArray)) {
             throw new Exception('Methods must either be a string or an array of strings');
         }
-        $this->methodNameOrArray = $methodNameOrArray;
+        $this->targetMethods = is_array($methodNameOrArray) ? $methodNameOrArray : array($methodNameOrArray);
     }
 
     /**
@@ -67,7 +67,7 @@ class tad_DependencyMocker_Smart implements tad_DependencyMocker
      * method and is meant as a fluent chain start.
      *
      * @param $className The class that should have its dependencies mocked.
-     * @param string /array $methodNameOrArray The methods to mock the dependencies of.
+     * @param string /array $targetMethods The methods to mock the dependencies of.
      * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
      * @param string $notation The notation to use to parse method dependencies.
      * @return tad_DependencyMocker
@@ -99,6 +99,7 @@ class tad_DependencyMocker_Smart implements tad_DependencyMocker
 
     protected function getMocksObjectOrArray()
     {
+        $this->maybeAddConstructToTargetMethods();
         $dependencies = $this->methodReader->getDependencies();
         $mocks = array();
         $testCase = new tad_TestCase();
@@ -120,5 +121,22 @@ class tad_DependencyMocker_Smart implements tad_DependencyMocker
             }
         }
         return $mocks;
+    }
+
+    protected function maybeAddConstructToTargetMethods()
+    {
+        $constructorIsNotTarget = !in_array('__construct', $this->targetMethods);
+        if ($constructorIsNotTarget) {
+            $clientClassReflection = new ReflectionClass($this->className);
+            $classMethods = $clientClassReflection->getMethods(ReflectionMethod::IS_PUBLIC);
+            $classMethodNames = array_map(function ($method) {
+                return $method->name;
+            }, $classMethods);
+            $classHasAConstructorMethod = in_array('__construct', $classMethodNames);
+            if ($classHasAConstructorMethod) {
+                $this->forMethods(array_merge(array('__construct'), $this->targetMethods));
+                $this->methodReader->setMethodName($this->targetMethods);
+            }
+        }
     }
 }

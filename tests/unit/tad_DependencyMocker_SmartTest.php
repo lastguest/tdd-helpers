@@ -1,7 +1,31 @@
 <?php
 
+use PhpParser\Node\Expr\Cast\Int;
+
+interface Int1
+{
+}
+
+class DependencyClass231
+{
+}
+
 class TestClass231
 {
+
+    public function methodOne(stdClass $one, stdClass $two, stdClass $three)
+    {
+
+    }
+}
+class TestClass232
+{
+
+    public function __construct(DependencyClass231 $dep231, Int1 $int1)
+    {
+
+    }
+
     public function methodOne(stdClass $one, stdClass $two, stdClass $three)
     {
 
@@ -28,7 +52,7 @@ class tad_DependencyMocker_SmartTest extends \PHPUnit_Framework_TestCase
         $deps = ['stdClass' => ['one', 'two', 'three']];
         $methodReader = $this->getMockBuilder('tad_MethodReader')
             ->disableOriginalConstructor()
-            ->setMethods(array('__construct', 'getDependencies'))
+            ->setMethods(array('__construct','setMethodName', 'setClassName', 'getDependencies'))
             ->getMock();
         $methodReader->expects($this->once())
             ->method('getDependencies')
@@ -48,7 +72,7 @@ class tad_DependencyMocker_SmartTest extends \PHPUnit_Framework_TestCase
         $deps = ['stdClass' => ['one', 'two', 'three']];
         $methodReader = $this->getMockBuilder('tad_MethodReader')
             ->disableOriginalConstructor()
-            ->setMethods(array('__construct', 'getDependencies'))
+            ->setMethods(array('__construct','setMethodName', 'setClassName', 'getDependencies'))
             ->getMock();
         $methodReader->expects($this->once())
             ->method('getDependencies')
@@ -74,7 +98,7 @@ class tad_DependencyMocker_SmartTest extends \PHPUnit_Framework_TestCase
         $deps = ['stdClass' => ['one', 'two', 'three']];
         $methodReader = $this->getMockBuilder('tad_MethodReader')
             ->disableOriginalConstructor()
-            ->setMethods(array('__construct', 'getDependencies'))
+            ->setMethods(array('__construct','setMethodName', 'setClassName', 'getDependencies'))
             ->getMock();
         $methodReader->expects($this->once())
             ->method('getDependencies')
@@ -90,5 +114,36 @@ class tad_DependencyMocker_SmartTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(method_exists($two, 'methodBaz'));
         $this->assertTrue(method_exists($three, 'methodFoo'));
         $this->assertTrue(method_exists($three, 'methodBaz'));
+    }
+
+    /**
+     * @test
+     * it should mock constructor method parameters by default
+     */
+    public function it_should_mock_constructor_method_parameters_by_default()
+    {
+//        public function __construct(DependencyClass231 $dep231, Int1 $int1)
+//        public function methodOne(stdClass $one, stdClass $two, stdClass $three)
+
+
+        $deps = [
+            'DependencyClass231' => ['dep231'],
+            'Int1' => ['int1'],
+            'stdClass' => ['one', 'two', 'three']
+        ];
+        $methodReader = $this->getMockBuilder('tad_MethodReader')
+            ->disableOriginalConstructor()
+            ->setMethods(array('__construct','setMethodName', 'setClassName', 'getDependencies'))
+            ->getMock();
+        $methodReader->expects($this->once())
+            ->method('setMethodName')
+            ->with(['__construct', 'methodOne']);
+        $methodReader->expects($this->once())
+            ->method('getDependencies')
+            ->will($this->returnValue($deps));
+
+        $sut = new tad_DependencyMocker_Smart('TestClass232', array('methodOne'), null, $methodReader);
+
+        extract($sut->getMocksArray());
     }
 }
