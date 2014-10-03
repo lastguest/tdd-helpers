@@ -24,6 +24,11 @@ class ClassToRead
     {
         echo $arg->method();
     }
+
+    public function methodF(stdClass $stdClass1, $someArg, array $arrayArg, stdClass $stdClass2)
+    {
+
+    }
 }
 
 class tad_MethodReaderTest extends \PHPUnit_Framework_TestCase
@@ -103,6 +108,19 @@ class tad_MethodReaderTest extends \PHPUnit_Framework_TestCase
         $expected = [
             'stdClass' => ['arg']
         ];
+        $this->assertEquals($expected, $dependencies);
+    }
+
+    /**
+     * @test
+     * it should not return scalar or array parameters as dependencies by default
+     */
+    public function it_should_not_return_scalar_or_array_parameters_as_dependencies_by_default()
+    {
+//        public function methodF(stdClass $stdClass1, $someArg, array $arrayArg, stdClass $stdClass2){
+        $sut = new tad_MethodReaderImpl('ClassToRead', ['methodF']);
+        $dependencies = $sut->getDependencies();
+        $expected = ['stdClass' => ['stdClass1', 'stdClass2']];
         $this->assertEquals($expected, $dependencies);
     }
 }

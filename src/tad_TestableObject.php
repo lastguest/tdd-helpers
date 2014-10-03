@@ -14,7 +14,7 @@ abstract class tad_TestableObject
      * The extending class is required to define valid doc blocks
      * for each public method that's meant to have its dependencies
      * mocked using the "@depends" notation.
-     * See tad_DependencyMocker class for more in-detail information.
+     * See tad_DependencyDocMocker class for more in-detail information.
      *
      *      * @depends A, B, CInterface
      *
@@ -35,7 +35,7 @@ abstract class tad_TestableObject
      * The extending class is required to define valid doc blocks
      * for each public method that's meant to have its dependencies
      * mocked using the "@depends" notation.
-     * See tad_DependencyMocker class for more in-detail information.
+     * See tad_DependencyDocMocker class for more in-detail information.
      *
      *      * @depends A, B, CInterface
      *
@@ -62,7 +62,7 @@ abstract class tad_TestableObject
         if (!method_exists($className, $methodName)) {
             throw new InvalidArgumentException("Method $methodName does not exist", 3);
         }
-        $mocker = new tad_DependencyMocker($className);
+        $mocker = new tad_DependencyDocMocker($className);
         if ($returnObject) {
             return $mocker->forMethods($methodName)
                 ->getMocks();
