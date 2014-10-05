@@ -33,7 +33,7 @@
  *     {
  *         public static function call()
  *         {
- *             if($class = tad_Static::getClassExtending(__CLASS__)){
+ *             if($class = tad_Utility_Static::getClassExtending(__CLASS__)){
  *                 return call_user_func(array($class, 'someMethod'));
  *             }
  *             return self::someMethod();
@@ -49,7 +49,7 @@
  *     {
  *         protected static function init()
  *         {
- *             tad_Static::setClassExtending('ParentClass', __CLASS__);
+ *             tad_Utility_Static::setClassExtending('ParentClass', __CLASS__);
  *         }
  *         protected static function someMethod()
  *         {
@@ -63,7 +63,7 @@
  * 
  * will now return `from class ChildClass`
  */
-class tad_Static
+class tad_Utility_Static
 {
     
     /**
@@ -87,7 +87,7 @@ class tad_Static
      *
      * then
      *
-     *     tad_Static::getClassExtending('parentClass')
+     *     tad_Utility_Static::getClassExtending('parentClass')
      *
      * will return 'childClass'.
      *

@@ -1,6 +1,6 @@
 <?php
 
-use tad_StaticMocker as S;
+use tad\Mocker\StaticMocker as S;
 
 class StaticMockerTest extends \PHPUnit_Framework_TestCase
 {

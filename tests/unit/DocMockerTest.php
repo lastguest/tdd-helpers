@@ -1,7 +1,7 @@
 <?php
 namespace some\vendor {
 
-    class Test231 extends \tad_TestableObject
+    class Test231
     {
 
         /**
@@ -48,6 +48,8 @@ namespace some\vendor {
 
 }
 namespace {
+    use tad\DependencyMocker\DocMocker;
+
     interface InterfaceNoMethods
     {
 
@@ -63,7 +65,7 @@ namespace {
         public function someMethod();
     }
 
-    class Test119 extends tad_TestableObject
+    class Test119
     {
 
         /**
@@ -88,7 +90,7 @@ namespace {
         }
     }
 
-    class Test231 extends tad_TestableObject
+    class Test231
     {
 
         /**
@@ -125,7 +127,7 @@ namespace {
 
     }
 
-    class tad_DependencyMockerTest extends \PHPUnit_Framework_TestCase
+    class DocMockerTest extends \PHPUnit_Framework_TestCase
     {
         /**
          * @test
@@ -133,7 +135,7 @@ namespace {
          */
         public function it_should_allow_getting_an_array_of_all_mocked_constructor_dependencies()
         {
-            $sut = new tad_DependencyDocMocker('Test231');
+            $sut = new DocMocker('Test231');
             $mockDeps = $sut->forMethods('__construct')
                 ->getMocks();
             $this->assertObjectHasAttribute('Test119', $mockDeps);
@@ -150,7 +152,7 @@ namespace {
          */
         public function it_should_allow_getting_an_array_of_all_mocked_method_dependencies()
         {
-            $sut = new tad_DependencyDocMocker('Test231');
+            $sut = new DocMocker('Test231');
             $mockDeps = $sut->forMethods('methodOne')
                 ->getMocks();
             $this->assertObjectHasAttribute('Test119', $mockDeps);
@@ -167,7 +169,7 @@ namespace {
          */
         public function it_should_allow_mocking_interface_dependencies_with_magic_methods()
         {
-            $sut = new tad_DependencyDocMocker('Test231');
+            $sut = new DocMocker('Test231');
             $mockDeps = $sut->forMethods('methodTwo')
                 ->getMocks();
             $this->assertObjectHasAttribute('Test119', $mockDeps);
@@ -184,7 +186,7 @@ namespace {
          */
         public function it_should_allow_setting_expectations_on_returned_methods()
         {
-            $sut = new tad_DependencyDocMocker('Test231');
+            $sut = new DocMocker('Test231');
             $mockDeps = $sut->forMethods('methodThree')
                 ->getMocks();
             $mockDeps->Test119->expects($this->once())
@@ -201,7 +203,7 @@ namespace {
          */
         public function it_should_allow_setting_return_values_on_returned_methods()
         {
-            $sut = new tad_DependencyDocMocker('Test231');
+            $sut = new DocMocker('Test231');
             $mockDeps = $sut->forMethods('methodThree')
                 ->getMocks();
             $mockDeps->Test119->expects($this->once())
@@ -220,7 +222,7 @@ namespace {
          */
         public function it_should_allow_mocking_dependencies_for_multiple_methods_passing_an_array()
         {
-            $sut = new tad_DependencyDocMocker('Test231');
+            $sut = new DocMocker('Test231');
             $mockDeps = $sut->forMethods(array('methodTwo', 'methodThree'))
                 ->getMocks();
             $this->assertObjectHasAttribute('Test119', $mockDeps);
@@ -239,7 +241,7 @@ namespace {
          */
         public function it_should_allow_getting_an_array_of_mocked_dependencies()
         {
-            $sut = new tad_DependencyDocMocker('Test231');
+            $sut = new DocMocker('Test231');
             $mockDeps = $sut->forMethods(array('methodTwo', 'methodThree'))
                 ->getMocksArray();
             $this->assertArrayHasKey('Test119', $mockDeps);
@@ -258,7 +260,7 @@ namespace {
          */
         public function it_should_allow_extracting_mocked_dependencies()
         {
-            $sut = new tad_DependencyDocMocker('Test231');
+            $sut = new DocMocker('Test231');
             $mockDeps = $sut->forMethods(array('methodTwo', 'methodThree'))
                 ->getMocksArray();
             extract($mockDeps);
@@ -273,7 +275,7 @@ namespace {
          */
         public function it_should_allow_mocking_namespaced_classes()
         {
-            $sut = new tad_DependencyDocMocker('\some\vendor\Test231');
+            $sut = new DocMocker('\some\vendor\Test231');
             $mockDeps = $sut->forMethods(array('methodTwo', 'methodThree'))
                 ->getMocksArray();
             extract($mockDeps);
@@ -289,7 +291,7 @@ namespace {
         public
         function it_should_allow_getting_an_instance_of_the_class_using_the_on_static_method()
         {
-            $this->assertInstanceOf('tad_DependencyDocMocker', \tad_DependencyDocMocker::on('stdClass'));
+            $this->assertInstanceOf('tad\DependencyMocker\DocMocker', DocMocker::on('stdClass'));
         }
 
         /**
@@ -298,7 +300,7 @@ namespace {
          */
         public function it_should_allow_mocking_the_constructor_method_by_defatult_if_no_methods_are_set()
         {
-            $sut = new tad_DependencyDocMocker('\some\vendor\Test231');
+            $sut = new DocMocker('\some\vendor\Test231');
             $mockDeps = $sut->getMocksArray();
             extract($mockDeps);
             $this->assertNotNull($Test119);
@@ -315,7 +317,7 @@ namespace {
             $toStub = [
                 'Interface119' => ['one', 'two', 'three']
             ];
-            $sut = new \tad_DependencyDocMocker('\some\vendor\Test231');
+            $sut = new DocMocker('\some\vendor\Test231');
             extract($sut->forMethods('methodTwo')->setExtraMethods($toStub)->getMocksArray());
             $this->assertNotNull($Test119);
             $this->assertNotNull($Interface119);
@@ -335,7 +337,7 @@ namespace {
                 'Interface119' => ['one', 'two', 'three'],
                 'Test119' => ['four', 'five']
             ];
-            $sut = new \tad_DependencyDocMocker('\some\vendor\Test231');
+            $sut = new DocMocker('\some\vendor\Test231');
             extract($sut->forMethods('methodTwo')->setExtraMethods($toStub)->getMocksArray());
             $this->assertNotNull($Test119);
             $this->assertNotNull($Interface119);
@@ -356,7 +358,7 @@ namespace {
             $toStub = [
                 'InterfaceNoMethods' => ['one', 'two', 'three']
             ];
-            $sut = new \tad_DependencyDocMocker('\some\vendor\Test231');
+            $sut = new DocMocker('\some\vendor\Test231');
             extract($sut->forMethods('methodFour')->setExtraMethods($toStub)->getMocksArray());
             $this->assertNotNull($InterfaceNoMethods);
             $this->assertTrue(method_exists($InterfaceNoMethods, 'one'));
@@ -373,7 +375,7 @@ namespace {
             $toStub = [
                 'Interface120' => ['someMethod', 'two', 'three']
             ];
-            $sut = new \tad_DependencyDocMocker('\some\vendor\Test231');
+            $sut = new DocMocker('\some\vendor\Test231');
             extract($sut->forMethods('methodOne')->setExtraMethods($toStub)->getMocksArray());
             $this->assertNotNull($Interface120);
             $this->assertTrue(method_exists($Interface120, 'someMethod'));

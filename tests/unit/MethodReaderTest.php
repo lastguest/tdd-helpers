@@ -1,5 +1,7 @@
 <?php
 
+use tad\DependencyMocker\MethodReader;
+
 class ClassToRead
 {
     public function methodA()
@@ -31,7 +33,7 @@ class ClassToRead
     }
 }
 
-class tad_MethodReaderTest extends \PHPUnit_Framework_TestCase
+class MethodReaderTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
@@ -47,7 +49,7 @@ class tad_MethodReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_getting_a_method_dependencies()
     {
-        $sut = new tad_MethodReaderImpl('ClassToRead', 'methodB');
+        $sut = new MethodReader('ClassToRead', 'methodB');
         $dependencies = $sut->getDependencies();
         $expected = ['stdClass' => ['arg']];
         $this->assertEquals($expected, $dependencies);
@@ -59,7 +61,7 @@ class tad_MethodReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_allow_getting_dependencies_of_more_than_one_method()
     {
-        $sut = new tad_MethodReaderImpl('ClassToRead', ['methodB', 'methodC']);
+        $sut = new MethodReader('ClassToRead', ['methodB', 'methodC']);
         $dependencies = $sut->getDependencies();
         $expected = [
             'stdClass' => ['arg'],
@@ -74,7 +76,7 @@ class tad_MethodReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_return_duplicate_entries_if_differently_named()
     {
-        $sut = new tad_MethodReaderImpl('ClassToRead', ['methodB', 'methodC', 'methodD']);
+        $sut = new MethodReader('ClassToRead', ['methodB', 'methodC', 'methodD']);
         $dependencies = $sut->getDependencies();
         $expected = [
             'stdClass' => ['arg', 'arg2'],
@@ -89,7 +91,7 @@ class tad_MethodReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_not_return_duplicate_entries()
     {
-        $sut = new tad_MethodReaderImpl('ClassToRead', ['methodB', 'methodB', 'methodB']);
+        $sut = new MethodReader('ClassToRead', ['methodB', 'methodB', 'methodB']);
         $dependencies = $sut->getDependencies();
         $expected = [
             'stdClass' => ['arg']
@@ -103,7 +105,7 @@ class tad_MethodReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_not_return_duplicat_entried_for_different_methods()
     {
-        $sut = new tad_MethodReaderImpl('ClassToRead', ['methodB', 'methodE']);
+        $sut = new MethodReader('ClassToRead', ['methodB', 'methodE']);
         $dependencies = $sut->getDependencies();
         $expected = [
             'stdClass' => ['arg']
@@ -118,7 +120,7 @@ class tad_MethodReaderTest extends \PHPUnit_Framework_TestCase
     public function it_should_not_return_scalar_or_array_parameters_as_dependencies_by_default()
     {
 //        public function methodF(stdClass $stdClass1, $someArg, array $arrayArg, stdClass $stdClass2){
-        $sut = new tad_MethodReaderImpl('ClassToRead', ['methodF']);
+        $sut = new MethodReader('ClassToRead', ['methodF']);
         $dependencies = $sut->getDependencies();
         $expected = ['stdClass' => ['stdClass1', 'stdClass2']];
         $this->assertEquals($expected, $dependencies);

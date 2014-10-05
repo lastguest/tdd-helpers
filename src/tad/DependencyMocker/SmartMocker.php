@@ -1,13 +1,14 @@
 <?php
+namespace tad\DependencyMocker;
 
-class tad_DependencyMocker_Smart implements tad_DependencyMocker
+class SmartMocker implements IDependencyMocker
 {
     protected $className;
     protected $targetMethods;
     protected $extraMethods;
     protected $methodReader;
 
-    public function __construct($className, $methodNameOrArray = null, array $extraMethods = null, tad_MethodReader $methodReader = null)
+    public function __construct($className, $methodNameOrArray = null, array $extraMethods = null, IMethodReader $methodReader = null)
     {
         if (!is_string($className)) {
             throw new Exception('Class name must be a string');
@@ -15,7 +16,7 @@ class tad_DependencyMocker_Smart implements tad_DependencyMocker
         $this->className = $className;
         $this->forMethods($methodNameOrArray);
         $this->setExtraMethods($extraMethods);
-        $this->methodReader = $methodReader ? $methodReader : new tad_MethodReaderImpl($className, $methodNameOrArray);
+        $this->methodReader = $methodReader ? $methodReader : new MethodReader($className, $methodNameOrArray);
     }
 
     /**
@@ -70,7 +71,7 @@ class tad_DependencyMocker_Smart implements tad_DependencyMocker
      * @param string /array $targetMethods The methods to mock the dependencies of.
      * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
      * @param string $notation The notation to use to parse method dependencies.
-     * @return tad_DependencyMocker
+     * @return DependencyMocker
      */
     public static function on($className, $methodNameOrArray = null, array $extraMethods = null)
     {
@@ -102,10 +103,10 @@ class tad_DependencyMocker_Smart implements tad_DependencyMocker
         $this->maybeAddConstructToTargetMethods();
         $dependencies = $this->methodReader->getDependencies();
         $mocks = array();
-        $testCase = new tad_TestCase();
+        $testCase = new TestCase();
         foreach ($dependencies as $class => $args) {
-            $reflectionClass = new ReflectionClass($class);
-            $definedClassMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+            $reflectionClass = new \ReflectionClass($class);
+            $definedClassMethods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
             $classMethodsNames = array_map(function ($method) {
                 return $method->name;
             }, $definedClassMethods);
@@ -127,8 +128,8 @@ class tad_DependencyMocker_Smart implements tad_DependencyMocker
     {
         $constructorIsNotTarget = !in_array('__construct', $this->targetMethods);
         if ($constructorIsNotTarget) {
-            $clientClassReflection = new ReflectionClass($this->className);
-            $classMethods = $clientClassReflection->getMethods(ReflectionMethod::IS_PUBLIC);
+            $clientClassReflection = new \ReflectionClass($this->className);
+            $classMethods = $clientClassReflection->getMethods(\ReflectionMethod::IS_PUBLIC);
             $classMethodNames = array_map(function ($method) {
                 return $method->name;
             }, $classMethods);

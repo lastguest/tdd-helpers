@@ -1,7 +1,7 @@
 <?php
+namespace tad\DependencyMocker;
 
-
-class tad_MethodReaderImpl implements tad_MethodReader
+class MethodReader implements IMethodReader
 {
     protected $className;
     protected $methodNames;
@@ -16,7 +16,7 @@ class tad_MethodReaderImpl implements tad_MethodReader
     {
         $dependencies = array();
         foreach ($this->methods as $methodName) {
-            $method = new ReflectionMethod($this->className, $methodName);
+            $method = new \ReflectionMethod($this->className, $methodName);
             $params = $method->getParameters();
             foreach ($params as $param) {
                 $class = $param->getClass();

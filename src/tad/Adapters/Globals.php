@@ -2,7 +2,7 @@
 /**
  * An adapter class that allows accessing the superglboals in an OOP way.
  */
-class tad_GlobalsAdapter implements tad_GlobalsAdapterInterface
+class tad_Adapters_Globals implements tad_Adapters_IGlobals
 {
     protected static $slugs = array('globals', 'server', 'get', 'post', 'files', 'cookie', 'request', 'env', 'session');
     
@@ -39,7 +39,7 @@ class tad_GlobalsAdapter implements tad_GlobalsAdapterInterface
      *
      * Usage example to access $GLOBALS['foo'] is
      *
-     *     $g = new tad_GlobalsAdapter();
+     *     $g = new tad_Adapters_Globals();
      *     $foo = $g->globals('foo');
      *
      * To get the superglobal array call the function with no arguments, i.e.

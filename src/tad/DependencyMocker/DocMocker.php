@@ -1,17 +1,17 @@
 <?php
-
+namespace tad\DependencyMocker;
 /**
- * Class tad_DependencyDocMocker
+ * Class DocMocker
  *
  * Mocks method dependencies. The supposed workflow is
  *
- *     $mocker = new tad_DependencyDocMocker($this, $className);
+ *     $mocker = new DocMocker($this, $className);
  *     $mockedDependencies = $mocker->forMethods(array('methodOne, methodTwo));
  *
  *     // set expectations and return values on mocked objects
  *     $mockedDependencies->DependencyOne->expects(...
  */
-class tad_DependencyDocMocker implements tad_DependencyMocker
+class DocMocker implements IDependencyMocker
 {
     protected $className;
     protected $methodName;
@@ -20,7 +20,7 @@ class tad_DependencyDocMocker implements tad_DependencyMocker
 
     /**
      * @param $className The class that should have its dependencies mocked.
-     * @param string/array $targetMethods The methods to mock the dependencies of.
+     * @param string /array $targetMethods The methods to mock the dependencies of.
      * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
      * @param string $notation The notation to use to parse method dependencies.
      */
@@ -114,7 +114,7 @@ class tad_DependencyDocMocker implements tad_DependencyMocker
         }
         $classes = array();
         foreach ($methods as $method) {
-            $reflector = new ReflectionMethod($this->className, $method);
+            $reflector = new \ReflectionMethod($this->className, $method);
             $docBlock = $reflector->getDocComment();
             $lines = explode("\n", $docBlock);
             foreach ($lines as $line) {
@@ -131,8 +131,8 @@ class tad_DependencyDocMocker implements tad_DependencyMocker
         $methods = array();
         $stubsForClasses = $this->extraMethods ? $this->extraMethods : array();
         array_map(function ($class) use (&$methods, $stubsForClasses) {
-            $reflector = new ReflectionClass($class);
-            $definedMethods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
+            $reflector = new \ReflectionClass($class);
+            $definedMethods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
             $definedMethodNames = array_map(function ($method) {
                 return $method->name;
             }, $definedMethods);
@@ -140,8 +140,8 @@ class tad_DependencyDocMocker implements tad_DependencyMocker
             $methods[$class] = array_merge($definedMethodNames, $stubMethods);
         }, $classes);
 
-        $testCase = new tad_TestCase();
-        $mocks = new stdClass();
+        $testCase = new TestCase();
+        $mocks = new \stdClass();
         foreach ($classes as $class) {
             $mocks->$class = $testCase
                 ->getMockBuilder($class)
@@ -162,10 +162,10 @@ class tad_DependencyDocMocker implements tad_DependencyMocker
      * method and is meant as a fluent chain start.
      *
      * @param $className The class that should have its dependencies mocked.
-     * @param string/array $targetMethods The methods to mock the dependencies of.
+     * @param string /array $targetMethods The methods to mock the dependencies of.
      * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
      * @param string $notation The notation to use to parse method dependencies.
-     * @return tad_DependencyDocMocker
+     * @return DocMocker
      */
     public static function on($className, $methodNameOrArray = null, array $extraMethods = null, $notation = 'depends')
     {
