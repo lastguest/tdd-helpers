@@ -1,8 +1,8 @@
 <?php
 
-use tad\DependencyMocker\FunctionsCollector;
+use tad\DependencyMocker\FunctionCallsCollector;
 
-class FunctionsCollectorTest extends \PHPUnit_Framework_TestCase
+class FunctionCallsCollectorTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
@@ -18,7 +18,7 @@ class FunctionsCollectorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_call_the_global_function()
     {
-        $sut = new FunctionsCollector();
+        $sut = new FunctionCallsCollector();
         $out = $sut->ucfirst('some');
 
         $this->assertEquals('Some', $out);
@@ -30,16 +30,11 @@ class FunctionsCollectorTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_return_an_array_of_called_reflected_functions()
     {
-        $sut = new FunctionsCollector();
+        $sut = new FunctionCallsCollector();
         $sut->ucfirst('some');
 
         $called = $sut->getCalled();
         $this->assertEquals([new ReflectionFunction('ucfirst')], $called);
     }
 
-}
-
-function someMethod($arg1)
-{
-    // do nothing
 }

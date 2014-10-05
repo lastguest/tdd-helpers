@@ -1,7 +1,7 @@
 <?php
 namespace tad\DependencyMocker;
 
-class FunctionsCollector implements \tad_Adapters_IFunctions
+class FunctionCallsCollector implements \tad_Adapters_IFunctions
 {
     protected $called;
 
