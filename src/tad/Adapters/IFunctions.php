@@ -7,7 +7,7 @@
  * 
  *     $mockF = $this->getMock('TAD_FunctionsAdapterInterface');
  */
-interface tad_FunctionsAdapterInterface
+interface tad_Adapters_IFunctions
 {
     public function __call($function, $arguments);
 }

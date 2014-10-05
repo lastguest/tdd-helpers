@@ -1,10 +1,13 @@
 <?php
+namespace tad\DependencyMocker;
 
-interface tad_MethodReader
+interface IMethodReader
 {
     public function __construct($className, $methodName);
 
     public function getDependencies();
+
     public function setClassName($className);
+
     public function setMethodName($methodNameOrArray);
 }

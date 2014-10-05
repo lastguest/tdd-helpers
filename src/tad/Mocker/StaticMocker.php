@@ -1,4 +1,5 @@
 <?php
+namespace tad\Mocker;
 /**
  * A test helper to mock (in a way and with limits) static method calls.
  *
@@ -13,7 +14,7 @@
  *
  * and then in the test file
  *
- *     class StaticClass extends tad_StaticMocker
+ *     class StaticClass extends StaticMocker
  *     {}
  *
  *
@@ -36,7 +37,7 @@
  *     }
  *
  */
-class tad_StaticMocker
+class StaticMocker
 {
     protected static $methods;
     protected static $listener;

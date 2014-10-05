@@ -3,7 +3,7 @@ class ParentClass
 {
     public static function aMethod()
     {
-        if ($class = tad_Static::getClassExtending(__CLASS__)) {
+        if ($class = tad_Utility_Static::getClassExtending(__CLASS__)) {
             return call_user_func(array(
                 $class,
                 'someMethod'
@@ -17,7 +17,7 @@ class ParentClass
     }
     public static function callAnotherMethod($arg1, $arg2)
     {
-        return tad_Static::call(__CLASS__, 'anotherMethod', $arg1, $arg2);
+        return tad_Utility_Static::call(__CLASS__, 'anotherMethod', $arg1, $arg2);
     }
 }
 
@@ -25,7 +25,7 @@ class ChildClass extends ParentClass
 {
     public static function init()
     {
-        tad_Static::setClassExtending('ParentClass', __CLASS__);
+        tad_Utility_Static::setClassExtending('ParentClass', __CLASS__);
     }
     protected static function someMethod($arg1, $arg2)
     {
@@ -37,11 +37,11 @@ class ChildClass extends ParentClass
     }
 }
 
-class tad_StaticTest extends \PHPUnit_Framework_TestCase
+class tad_Utility_StaticTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        tad_Static::reset();
+        tad_Utility_Static::reset();
     }
     
     protected function tearDown()
@@ -54,7 +54,7 @@ class tad_StaticTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_be_instantiatable()
     {
-        $this->assertInstanceOf('tad_Static', new tad_Static());
+        $this->assertInstanceOf('tad_Utility_Static', new tad_Utility_Static());
     }
     
     /**
@@ -65,8 +65,8 @@ class tad_StaticTest extends \PHPUnit_Framework_TestCase
     {
         $parentClass = __CLASS__;
         $childClass = 'SomeChildClass';
-        tad_Static::setClassExtending($parentClass, $childClass);
-        $this->assertEquals($childClass, tad_Static::getClassExtending($parentClass));
+        tad_Utility_Static::setClassExtending($parentClass, $childClass);
+        $this->assertEquals($childClass, tad_Utility_Static::getClassExtending($parentClass));
     }
     
     /**
@@ -77,10 +77,10 @@ class tad_StaticTest extends \PHPUnit_Framework_TestCase
     {
         $parentClass = __CLASS__;
         $childClass = 'SomeChildClass';
-        tad_Static::setClassExtending($parentClass, $childClass);
-        $this->assertEquals($childClass, tad_Static::getClassExtending($parentClass));
-        tad_Static::reset();
-        $this->assertNull(tad_Static::getClassExtending(__CLASS__));
+        tad_Utility_Static::setClassExtending($parentClass, $childClass);
+        $this->assertEquals($childClass, tad_Utility_Static::getClassExtending($parentClass));
+        tad_Utility_Static::reset();
+        $this->assertNull(tad_Utility_Static::getClassExtending(__CLASS__));
     }
     
     /**
@@ -89,7 +89,7 @@ class tad_StaticTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_return_null_if_a_parent_class_is_not_registered()
     {
-        $this->assertNull(tad_Static::getClassExtending(__CLASS__));
+        $this->assertNull(tad_Utility_Static::getClassExtending(__CLASS__));
     }
     
     /**
@@ -102,13 +102,13 @@ class tad_StaticTest extends \PHPUnit_Framework_TestCase
         $childClass1 = 'SomeChildClass';
         $parentClass2 = 'someParentClass';
         $childClass2 = 'SomeOtherChildClass';
-        tad_Static::setClassExtending($parentClass1, $childClass1);
-        tad_Static::setClassExtending($parentClass2, $childClass2);
-        $this->assertEquals($childClass1, tad_Static::getClassExtending($parentClass1));
-        $this->assertEquals($childClass2, tad_Static::getClassExtending($parentClass2));
-        tad_Static::reset($parentClass1);
-        $this->assertNull(tad_Static::getClassExtending($parentClass1));
-        $this->assertEquals($childClass2, tad_Static::getClassExtending($parentClass2));
+        tad_Utility_Static::setClassExtending($parentClass1, $childClass1);
+        tad_Utility_Static::setClassExtending($parentClass2, $childClass2);
+        $this->assertEquals($childClass1, tad_Utility_Static::getClassExtending($parentClass1));
+        $this->assertEquals($childClass2, tad_Utility_Static::getClassExtending($parentClass2));
+        tad_Utility_Static::reset($parentClass1);
+        $this->assertNull(tad_Utility_Static::getClassExtending($parentClass1));
+        $this->assertEquals($childClass2, tad_Utility_Static::getClassExtending($parentClass2));
     }
     
     /**

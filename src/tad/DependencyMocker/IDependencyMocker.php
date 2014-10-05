@@ -1,6 +1,7 @@
 <?php
+namespace tad\DependencyMocker;
 
-interface tad_DependencyMocker
+interface IDependencyMocker
 {
 
     /**
@@ -51,7 +52,7 @@ interface tad_DependencyMocker
      * @param string /array $targetMethods The methods to mock the dependencies of.
      * @param array $extraMethods An associative array of class/methods that should be explicitly mocked.
      * @param string $notation The notation to use to parse method dependencies.
-     * @return tad_DependencyMocker
+     * @return DependencyMocker
      */
     public static function on($className, $methodNameOrArray = null, array $extraMethods = null);
 

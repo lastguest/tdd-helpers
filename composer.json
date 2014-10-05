@@ -19,6 +19,9 @@
         "codeception/codeception": "*"
     },
     "autoload": {
-        "classmap": ["src/"]
+        "psr-0": {
+            "tad_": "src/",
+            "tad\\": "src/"
+        }
     }
 }
