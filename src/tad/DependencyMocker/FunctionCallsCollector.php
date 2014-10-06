@@ -13,12 +13,12 @@ class FunctionCallsCollector implements \tad_Adapters_IFunctions
     public function __call($function, $arguments)
     {
         $reflectionFunction = new \ReflectionFunction($function);
-        $this->called[] = $reflectionFunction;
+        $this->called[$reflectionFunction->name] = $reflectionFunction;
         return call_user_func_array($function, $arguments);
     }
 
     public function getCalled()
     {
-        return $this->called;
+        return array_values($this->called);
     }
 }
