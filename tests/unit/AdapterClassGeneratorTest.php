@@ -317,7 +317,7 @@ EOC;
         $sut = new AdapterClassGenerator([new ReflectionFunction('someMethod'), new ReflectionFunction('noArgs')]);
         $sut->setFileComment("some\ncomment");
         $sut->setClassComment("blah\nblah");
-        $sut->setNamespace('some\namespace');
+        $sut->setNamespace('some\\namespace');
         $sut->setClassName('SomeClass');
         $sut->setInterfaceName('some\namespace\Interface');
         $markup = <<< EOC
@@ -346,6 +346,26 @@ class SomeClass implements some\\namespace\\Interface {
 EOC;
         $this->assertEquals($markup, $sut->getClassMarkup());
     }
+
+    /**
+     * @test
+     * it should properly call functions accepting arguments by reference
+     */
+    public function it_should_properly_call_functions_accepting_arguments_by_reference()
+    {
+        $sut = new AdapterClassGenerator([new ReflectionFunction('array_func')]);
+        $sut->setClassName('SomeClass');
+        $markup = <<< EOC
+class SomeClass {
+
+    public function array_func(array &\$array){
+        return array_func(\$array);
+    }
+
+}
+EOC;
+        $this->assertEquals($markup, $sut->getClassMarkup());
+    }
 }
 
 function someMethod(array $list, stdClass $object)
@@ -356,4 +376,8 @@ function someMethod(array $list, stdClass $object)
 function noArgs()
 {
     // do nothing
+}
+
+function array_func(array &$array){
+
 }

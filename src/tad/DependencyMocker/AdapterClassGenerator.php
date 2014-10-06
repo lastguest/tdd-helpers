@@ -2,7 +2,6 @@
 
 namespace tad\DependencyMocker;
 
-
 class AdapterClassGenerator
 {
     protected $fileComment;
@@ -45,13 +44,14 @@ class AdapterClassGenerator
             } else if ($parameter->isArray()) {
                 $typeHintedClass = 'array ';
             }
+            $reference = $parameter->isPassedByReference() ? '&' : '';
             $optionalOrDefaultValue = '';
             if ($parameter->isOptional()) {
                 $optionalOrDefaultValue = ' = null';
             } else if ($parameter->isDefaultValueAvailable()) {
                 $optionalOrDefaultValue = ' = ' . (string)$parameter->getDefaultValue();
             }
-            return sprintf('%s$%s%s', $typeHintedClass, $parameter->name, $optionalOrDefaultValue);
+            return sprintf('%s%s$%s%s', $typeHintedClass, $reference, $parameter->name, $optionalOrDefaultValue);
         }, $method->getParameters());
         return $argsStrings;
     }
@@ -90,7 +90,8 @@ class AdapterClassGenerator
         $fileComment = $this->fileComment ? $this->getCommentedString($this->fileComment) . $this->newline : '';
         $nsString = $this->ns ? sprintf('namespace %s;%s', $this->ns, $this->newline . $this->newline) : '';
         $classComment = $this->classComment ? $this->getCommentedString($this->classComment) : '';
-        $out = sprintf('%s%s%sclass %s implements %s {%s%s}', $fileComment, $nsString, $classComment, $this->className, $this->interfaceName, "\n", $this->getMethodsMarkup());
+        $interfaceEntry = $this->interfaceName ? sprintf(' implements %s', $this->interfaceName) : '';
+        $out = sprintf('%s%s%sclass %s%s {%s%s}', $fileComment, $nsString, $classComment, $this->className, $interfaceEntry, "\n", $this->getMethodsMarkup());
         return $out;
     }
 
