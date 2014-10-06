@@ -7,24 +7,24 @@ class tad_Adapters_Globals implements tad_Adapters_IGlobals
 {
 
     /**
-     * Gets or sets the $_GLOBALS array or a variable stored in it.
+     * Gets or sets the $GLOBALS array or a variable stored in it.
      *
-     *     // will return the $_GLOBALS array
+     *     // will return the $GLOBALS array
      *     $globals = globals()
-     *     // will set the $_GLOBALS array
+     *     // will set the $GLOBALS array
      *     globals(array('some' => 'value'));
-     *     // will get the `some` variable from the $_GLOBALS array
+     *     // will get the `some` variable from the $GLOBALS array
      *     $val = globals('some);
-     *     // will set the `some` variable in the $_GLOBALS array
+     *     // will set the `some` variable in the $GLOBALS array
      *     globals('some', $value);
      *
-     * @param array /string $arrayOrKey Either an array to set the $_GLOBALS array to or the key to a value stored in the $_GLOBALS array.
-     * @param mixed $value The value to associate to a key in the $_GLOBALS array.
-     * @return mixed Either the array stored in the $_GLOBALS var or a value associated with a key.
+     * @param array /string $arrayOrKey Either an array to set the $GLOBALS array to or the key to a value stored in the $GLOBALS array.
+     * @param mixed $value The value to associate to a key in the $GLOBALS array.
+     * @return mixed Either the array stored in the $GLOBALS var or a value associated with a key.
      */
     public function globals($arrayOrKey = null, $value = null)
     {
-        return $this->_setOrGet($arrayOrKey, $value, $_GLOBALS);
+        return $this->_setOrGet($arrayOrKey, $value, $GLOBALS);
     }
 
     /**
