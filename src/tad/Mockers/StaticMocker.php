@@ -1,5 +1,5 @@
 <?php
-namespace tad\Mocker;
+namespace tad\Mockers;
 /**
  * A test helper to mock (in a way and with limits) static method calls.
  *

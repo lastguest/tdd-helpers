@@ -3,7 +3,7 @@
 /**
  * Globally defined functions wrapper
  */
-class tad_Adapters_Functions implements tad_Adapters_IFunctions
+class tad_Adapters_Functions implements tad_Adapters_FunctionsInterface
 {
     
     /**

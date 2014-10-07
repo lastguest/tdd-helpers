@@ -3,7 +3,7 @@
 /**
  * An adapter class that allows accessing the superglboals in an OOP way.
  */
-class tad_Adapters_Globals implements tad_Adapters_IGlobals
+class tad_Adapters_Globals implements tad_Adapters_GlobalsInterface
 {
 
     /**

@@ -1,14 +1,17 @@
 <?php
-namespace tad\DependencyMocker;
+namespace tad\Mockers\Dependency;
 
-class SmartMocker implements IDependencyMocker
+use tad\Mockers\Dependency\Utility\MethodReaderInterface;
+use tad\Mockers\Dependency\Utility\TestCase;
+
+class SmartMocker implements DependencyMockerInterface
 {
     protected $className;
     protected $targetMethods;
     protected $extraMethods;
     protected $methodReader;
 
-    public function __construct($className, $methodNameOrArray = null, array $extraMethods = null, IMethodReader $methodReader = null)
+    public function __construct($className, $methodNameOrArray = null, array $extraMethods = null, MethodReaderInterface $methodReader = null)
     {
         if (!is_string($className)) {
             throw new Exception('Class name must be a string');

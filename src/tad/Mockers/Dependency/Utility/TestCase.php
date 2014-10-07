@@ -1,6 +1,6 @@
 <?php
 
-namespace tad\DependencyMocker;
+namespace tad\Mockers\Dependency\Utility;
 
 class TestCase extends \PHPUnit_Framework_TestCase{
 

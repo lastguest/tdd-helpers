@@ -48,7 +48,8 @@ namespace some\vendor {
 
 }
 namespace {
-    use tad\DependencyMocker\DocMocker;
+
+    use tad\Mockers\Dependency\DocMocker;
 
     interface InterfaceNoMethods
     {
@@ -291,7 +292,7 @@ namespace {
         public
         function it_should_allow_getting_an_instance_of_the_class_using_the_on_static_method()
         {
-            $this->assertInstanceOf('tad\DependencyMocker\DocMocker', DocMocker::on('stdClass'));
+            $this->assertInstanceOf('tad\Mockers\Dependency\DocMocker', DocMocker::on('stdClass'));
         }
 
         /**

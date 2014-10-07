@@ -1,6 +1,7 @@
 <?php
 
-use tad\DependencyMocker\AdapterClassGenerator;
+
+use tad\Generators\Adapter\AdapterClassGenerator;
 
 class AdapterClassGeneratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -414,7 +415,7 @@ EOC;
 
         $sut = AdapterClassGenerator::constructFromJson($this->jsonFile);
 
-        $this->assertInstanceOf('tad\DependencyMocker\AdapterClassGenerator', $sut);
+        $this->assertInstanceOf('tad\Generators\Adapter\AdapterClassGenerator', $sut);
         $this->assertEquals($expected, $sut->getFunctions());
     }
 
@@ -432,7 +433,7 @@ EOC;
 
         $sut = AdapterClassGenerator::constructFromJson($this->jsonFile);
 
-        $this->assertInstanceOf('tad\DependencyMocker\AdapterClassGenerator', $sut);
+        $this->assertInstanceOf('tad\Generators\Adapter\AdapterClassGenerator', $sut);
         $this->assertEquals($expected, $sut->getFunctions());
     }
 

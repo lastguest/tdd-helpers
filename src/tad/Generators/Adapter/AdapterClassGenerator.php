@@ -1,8 +1,7 @@
 <?php
 
-namespace tad\DependencyMocker;
+namespace tad\Generators\Adapter;
 
-use SebastianBergmann\Exporter\Exception;
 
 class AdapterClassGenerator
 {

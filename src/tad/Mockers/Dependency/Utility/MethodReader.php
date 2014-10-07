@@ -1,7 +1,7 @@
 <?php
-namespace tad\DependencyMocker;
+namespace tad\Mockers\Dependency\Utility;
 
-class MethodReader implements IMethodReader
+class MethodReader implements MethodReaderInterface
 {
     protected $className;
     protected $methodNames;
