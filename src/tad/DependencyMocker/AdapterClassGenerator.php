@@ -2,6 +2,8 @@
 
 namespace tad\DependencyMocker;
 
+use SebastianBergmann\Exporter\Exception;
+
 class AdapterClassGenerator
 {
     protected $fileComment;
@@ -12,6 +14,9 @@ class AdapterClassGenerator
     protected $functions;
     protected $newline = "\n";
     protected $tab = '    ';
+
+    protected $addMagicCall = true;
+    protected $outputFilePath;
 
     public function __construct(array $functions = null)
     {
@@ -91,7 +96,14 @@ class AdapterClassGenerator
         $nsString = $this->ns ? sprintf('namespace %s;%s', $this->ns, $this->newline . $this->newline) : '';
         $classComment = $this->classComment ? $this->getCommentedString($this->classComment) : '';
         $interfaceEntry = $this->interfaceName ? sprintf(' implements %s', $this->interfaceName) : '';
-        $out = sprintf('%s%s%sclass %s%s {%s%s}', $fileComment, $nsString, $classComment, $this->className, $interfaceEntry, "\n", $this->getMethodsMarkup());
+        $out = sprintf('%s%s%sclass %s%s {', $fileComment, $nsString, $classComment, $this->className, $interfaceEntry);
+        $magicCall = $this->addMagicCall ? $this->getMagicCallMarkup() : '';
+        $out .= sprintf('%s%s%s', $this->newline, $magicCall, $this->getMethodsMarkup());
+        $out .= '}';
+
+        // remove triple new lines
+        $out = preg_replace('/\n{3}/', "\n\n", $out);
+
         return $out;
     }
 
@@ -164,4 +176,79 @@ class AdapterClassGenerator
 
         return $out;
     }
-} 
+
+    public function getFunctions()
+    {
+        return $this->functions;
+    }
+
+    public static function constructFromJson($jsonFilePath)
+    {
+        if (!is_string($jsonFilePath)) {
+            throw new \Exception('Json file path must be a string');
+        }
+        if (!file_exists($jsonFilePath)) {
+            throw new \Exception('Json file does not exist');
+        }
+        $functions = json_decode(file_get_contents($jsonFilePath));
+        if (!is_array($functions)) {
+            throw new \Exception('Value stored in json file must be an array');
+        }
+        $existingFunctions = array_filter($functions, function ($func) {
+            return function_exists($func);
+        });
+        $refFunctions = array_map(function ($functionName) {
+            return new \ReflectionFunction($functionName);
+        }, $existingFunctions);
+        return new self($refFunctions);
+    }
+
+    public function willAddMagicCall()
+    {
+        return $this->addMagicCall;
+    }
+
+    public function addMagicCall($toggle = true)
+    {
+        $this->addMagicCall = $toggle ? true : false;
+    }
+
+    protected function getMagicCallMarkup()
+    {
+        $out = $this->newline;
+        $out .= $this->tab . 'public function __call($function, $args){';
+        $out .= $this->newline . $this->tab;
+        $out .= $this->tab . 'return call_user_func_array($function, $args);';
+        $out .= $this->newline;
+        $out .= $this->tab . '}' . $this->newline . $this->newline;
+
+        return $out;
+    }
+
+    public function setOutputFile($filePath)
+    {
+        if (!is_string($filePath)) {
+            throw new \Exception('File path should be a string');
+        }
+        $this->outputFilePath = $filePath;
+    }
+
+    public function getOuputFile()
+    {
+        return $this->outputFilePath;
+    }
+
+    public function generate()
+    {
+        if (!$this->outputFilePath) {
+            return;
+        }
+
+        $contents = '<?php';
+        $contents .= $this->newline;
+        $contents .= $this->getClassMarkup();
+
+        file_put_contents($this->outputFilePath, $contents);
+    }
+
+}
