@@ -3,6 +3,8 @@
 namespace tad\Generators\Adapter;
 
 
+use tad\Generators\Adapter\Utility\FileWriter;
+
 class AdapterClassGenerator
 {
     protected $fileComment;
@@ -15,9 +17,10 @@ class AdapterClassGenerator
     protected $tab = "\t";
     protected $addMagicCall = true;
     protected $outputFilePath;
+    protected $fileWriter;
     protected $smarty;
 
-    public function __construct(array $functions = null, \Smarty $smarty = null)
+    public function __construct(array $functions = null, \Smarty $smarty = null, FileWriter $fileWriter = null)
     {
         if (is_array($functions)) {
             array_walk($functions, function ($el, $index) {
@@ -29,6 +32,7 @@ class AdapterClassGenerator
         }
 
         $this->smarty = $smarty ? $smarty : new \Smarty();
+        $this->fileWriter = $fileWriter ? $fileWriter : null;
     }
 
     public static function constructFromJson($jsonFilePath)
@@ -130,8 +134,10 @@ class AdapterClassGenerator
         );
         $this->smarty->assign($vars);
         $contents = $this->smarty->fetch($this->getTemplate('file'));
-
-        file_put_contents($this->outputFilePath, $contents);
+        if (!$this->fileWriter) {
+            $this->fileWriter = new FileWriter($this->outputFilePath, $contents);
+        }
+        $this->fileWriter->write();
     }
 
     public function getClassMarkup()
