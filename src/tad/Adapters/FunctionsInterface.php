@@ -7,7 +7,7 @@
  * 
  *     $mockF = $this->getMock('TAD_FunctionsAdapterInterface');
  */
-interface tad_Adapters_FunctionsInterface
+interface tad_Adapters_FunctionsInterface extends PHP52Safe
 {
     public function __call($function, $args);
 }

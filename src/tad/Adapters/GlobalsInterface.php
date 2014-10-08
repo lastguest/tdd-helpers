@@ -8,7 +8,7 @@
  *
  *     $mockG = $this->getMock('tad_Adapters_GlobalsInterface');
  */
-interface tad_Adapters_GlobalsInterface
+interface tad_Adapters_GlobalsInterface extends PHP52Safe
 {
     /**
      * Gets or sets the $_GLOBALS array or a variable stored in it.
