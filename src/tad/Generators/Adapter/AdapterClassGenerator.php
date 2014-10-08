@@ -3,22 +3,13 @@
 namespace tad\Generators\Adapter;
 
 
+use tad\Base\ClassGeneratorBase;
 use tad\Generators\Adapter\Utility\FileWriter;
 
-class AdapterClassGenerator
+class AdapterClassGenerator extends ClassGeneratorBase
 {
-    protected $fileComment;
-    protected $ns;
-    protected $classComment;
-    protected $className;
-    protected $interfaceName;
     protected $functions;
-    protected $newline = "\n";
-    protected $tab = "\t";
     protected $addMagicCall = true;
-    protected $outputFilePath;
-    protected $fileWriter;
-    protected $smarty;
 
     public function __construct(array $functions = null, \Smarty $smarty = null, FileWriter $fileWriter = null)
     {
@@ -56,46 +47,6 @@ class AdapterClassGenerator
         return new self($refFunctions);
     }
 
-    public function setClassName($className)
-    {
-        if (!is_string($className)) {
-            throw new \Exception('Class name must be a string');
-        }
-        $this->className = $className;
-    }
-
-    public function setInterfaceName($interfaceName)
-    {
-        if (!is_string($interfaceName)) {
-            throw new \Exception('Interface name must be a string');
-        }
-        $this->interfaceName = $interfaceName;
-    }
-
-    public function setNamespace($namespace)
-    {
-        if (!is_string($namespace)) {
-            throw new \Exception('namespace must be a string');
-        }
-        $this->ns = ltrim($namespace, '\\');
-    }
-
-    public function setClassComment($classComment)
-    {
-        if (!is_string($classComment)) {
-            throw new \Exception('Class comment must be a string');
-        }
-        $this->classComment = $classComment;
-    }
-
-    public function setFileComment($fileComment)
-    {
-        if (!is_string($fileComment)) {
-            throw new \Exception('File comment must be a string');
-        }
-        $this->fileComment = $fileComment;
-    }
-
     public function getFunctions()
     {
         return $this->functions;
@@ -109,35 +60,6 @@ class AdapterClassGenerator
     public function addMagicCall($toggle = true)
     {
         $this->addMagicCall = $toggle ? true : false;
-    }
-
-    public function setOutputFile($filePath)
-    {
-        if (!is_string($filePath)) {
-            throw new \Exception('File path should be a string');
-        }
-        $this->outputFilePath = $filePath;
-    }
-
-    public function getOutputFile()
-    {
-        return $this->outputFilePath;
-    }
-
-    public function generate()
-    {
-        if (!$this->outputFilePath) {
-            return;
-        }
-        $vars = array(
-            'class' => $this->getClassMarkup()
-        );
-        $this->smarty->assign($vars);
-        $contents = $this->smarty->fetch('file.tpl');
-        if (!$this->fileWriter) {
-            $this->fileWriter = new FileWriter($this->outputFilePath, $contents);
-        }
-        $this->fileWriter->write();
     }
 
     public function getClassMarkup()
@@ -154,18 +76,6 @@ class AdapterClassGenerator
 
         $this->smarty->assign($vars);
         return $this->smarty->fetch('class.tpl');
-    }
-
-    /**
-     * @param $string
-     * @throws \Exception
-     * @throws \SmartyException
-     * @return string
-     */
-    protected function getCommentedString($string)
-    {
-        $this->smarty->assign('comment', $string);
-        return $this->smarty->fetch('comment.tpl');
     }
 
     protected function getMagicCallMarkup()
@@ -232,14 +142,6 @@ class AdapterClassGenerator
         }, $method->getParameters());
         $callArgs = implode(', ', $callArgs);
         return $callArgs;
-    }
-
-    protected function getCommentedLines($string)
-    {
-        $lines = array_map(function ($line) {
-            return sprintf(' * %s', $line);
-        }, explode("\n", $string));
-        return implode("\n", $lines);
     }
 
 }
