@@ -1,7 +1,7 @@
 <?php
-namespace tad\DependencyMocker;
+namespace tad\Generators\Adapter\Utility;
 
-class FunctionCallsCollector implements \tad_Adapters_IFunctions
+class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
 {
     protected $called;
     protected $jsonFilePath;

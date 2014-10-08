@@ -1,6 +1,7 @@
 <?php
 
-use tad\DependencyMocker\FunctionCallsCollector;
+
+use tad\Generators\Adapter\Utility\FunctionCallsCollector;
 
 class FunctionCallsCollectorTest extends \PHPUnit_Framework_TestCase
 {

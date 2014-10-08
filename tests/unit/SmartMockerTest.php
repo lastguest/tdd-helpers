@@ -1,7 +1,7 @@
 <?php
 
-use PhpParser\Node\Expr\Cast\Int;
-use tad\DependencyMocker\SmartMocker;
+
+use tad\Mockers\Dependency\SmartMocker;
 
 interface Int1
 {
@@ -52,7 +52,7 @@ class SmartMockerTest extends \PHPUnit_Framework_TestCase
     public function it_should_retrieve_set_methods_class_and_argument_list()
     {
         $deps = ['stdClass' => ['one', 'two', 'three']];
-        $methodReader = $this->getMockBuilder('\tad\DependencyMocker\IMethodReader')
+        $methodReader = $this->getMockBuilder('tad\Mockers\Dependency\Utility\MethodReaderInterface')
             ->disableOriginalConstructor()
             ->setMethods(array('__construct', 'setMethodName', 'setClassName', 'getDependencies'))
             ->getMock();
@@ -72,7 +72,7 @@ class SmartMockerTest extends \PHPUnit_Framework_TestCase
     public function it_should_return_a_mock_for_each_dependency_named_as_the_arg_name()
     {
         $deps = ['stdClass' => ['one', 'two', 'three']];
-        $methodReader = $this->getMockBuilder('\tad\DependencyMocker\IMethodReader')
+        $methodReader = $this->getMockBuilder('tad\Mockers\Dependency\Utility\MethodReaderInterface')
             ->disableOriginalConstructor()
             ->setMethods(array('__construct', 'setMethodName', 'setClassName', 'getDependencies'))
             ->getMock();
@@ -98,7 +98,7 @@ class SmartMockerTest extends \PHPUnit_Framework_TestCase
     public function it_should_allow_specifying_extra_methods()
     {
         $deps = ['stdClass' => ['one', 'two', 'three']];
-        $methodReader = $this->getMockBuilder('\tad\DependencyMocker\IMethodReader')
+        $methodReader = $this->getMockBuilder('tad\Mockers\Dependency\Utility\MethodReaderInterface')
             ->disableOriginalConstructor()
             ->setMethods(array('__construct', 'setMethodName', 'setClassName', 'getDependencies'))
             ->getMock();
@@ -133,7 +133,7 @@ class SmartMockerTest extends \PHPUnit_Framework_TestCase
             'Int1' => ['int1'],
             'stdClass' => ['one', 'two', 'three']
         ];
-        $methodReader = $this->getMockBuilder('\tad\DependencyMocker\IMethodReader')
+        $methodReader = $this->getMockBuilder('\tad\Mockers\Dependency\Utility\MethodReaderInterface')
             ->disableOriginalConstructor()
             ->setMethods(array('__construct', 'setMethodName', 'setClassName', 'getDependencies'))
             ->getMock();
@@ -171,7 +171,7 @@ class SmartMockerTest extends \PHPUnit_Framework_TestCase
             'Int1' => ['int1'],
             'stdClass' => ['one', 'two', 'three']
         ];
-        $methodReader = $this->getMockBuilder('\tad\DependencyMocker\IMethodReader')
+        $methodReader = $this->getMockBuilder('\tad\Mockers\Dependency\Utility\MethodReaderInterface')
             ->disableOriginalConstructor()
             ->setMethods(array('__construct', 'setMethodName', 'setClassName', 'getDependencies'))
             ->getMock();

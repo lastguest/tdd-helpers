@@ -1,6 +1,7 @@
 <?php
 
-use tad\DependencyMocker\AdapterClassGenerator;
+
+use tad\Generators\Adapter\AdapterClassGenerator;
 
 class AdapterClassGeneratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,7 +48,8 @@ class AdapterClassGeneratorTest extends \PHPUnit_Framework_TestCase
         $in = new ReflectionFunction('someMethod');
         $sut = new AdapterClassGenerator();
         $markup = <<<EOC
-public function someMethod(array \$list, stdClass \$object){
+public function someMethod(array \$list, stdClass \$object)
+{
     return someMethod(\$list, \$object);
 }
 EOC;
@@ -63,7 +65,8 @@ EOC;
         $in = new ReflectionFunction('someMethod');
         $sut = new AdapterClassGenerator();
         $markup = <<<EOC
-public function someMethod(array \$list, stdClass \$object){
+public function someMethod(array \$list, stdClass \$object)
+{
     return someMethod(\$list, \$object);
 }
 EOC;
@@ -79,7 +82,8 @@ EOC;
         $in = new ReflectionFunction('noArgs');
         $sut = new AdapterClassGenerator();
         $markup = <<<EOC
-public function noArgs(){
+public function noArgs()
+{
     return noArgs();
 }
 EOC;
@@ -95,7 +99,8 @@ EOC;
         $in = new ReflectionFunction('str_shuffle');
         $sut = new AdapterClassGenerator();
         $markup = <<<EOC
-public function str_shuffle(\$str){
+public function str_shuffle(\$str)
+{
     return str_shuffle(\$str);
 }
 EOC;
@@ -111,7 +116,8 @@ EOC;
         $in = new ReflectionFunction('abs');
         $sut = new AdapterClassGenerator();
         $markup = <<<EOC
-public function abs(\$number){
+public function abs(\$number)
+{
     return abs(\$number);
 }
 EOC;
@@ -130,6 +136,7 @@ EOC;
         $sut->setInterfaceName('tad_Adapter_IFunctions');
         $markup = <<< EOC
 class SomeClass implements tad_Adapter_IFunctions {
+
 }
 EOC;
         $this->assertEquals($markup, $sut->getClassMarkup());
@@ -151,6 +158,7 @@ EOC;
 namespace some\\namespace;
 
 class SomeClass implements tad_Adapter_IFunctions {
+
 }
 EOC;
         $this->assertEquals($markup, $sut->getClassMarkup());
@@ -172,6 +180,7 @@ EOC;
 namespace some\\namespace;
 
 class SomeClass implements some\\namespace\\Interface {
+
 }
 EOC;
         $this->assertEquals($markup, $sut->getClassMarkup());
@@ -197,6 +206,7 @@ namespace some\\namespace;
  * Blah blah
  */
 class SomeClass implements some\\namespace\\Interface {
+
 }
 EOC;
         $this->assertEquals($markup, $sut->getClassMarkup());
@@ -223,6 +233,7 @@ EOC;
 namespace some\\namespace;
 
 class SomeClass implements some\\namespace\\Interface {
+
 }
 EOC;
         $this->assertEquals($markup, $sut->getClassMarkup());
@@ -250,6 +261,7 @@ EOC;
 namespace some\\namespace;
 
 class SomeClass implements some\\namespace\\Interface {
+
 }
 EOC;
         $this->assertEquals($markup, $sut->getClassMarkup());
@@ -276,102 +288,6 @@ namespace some\\namespace;
  * blah
  */
 class SomeClass implements some\\namespace\\Interface {
-}
-EOC;
-        $this->assertEquals($markup, $sut->getClassMarkup());
-    }
-
-    /**
-     * @test
-     * it should return properly formatted class with one function
-     */
-    public function it_should_return_properly_formatted_class_with_one_function()
-    {
-        $sut = new AdapterClassGenerator([new ReflectionFunction('someMethod')]);
-        $sut->setNamespace('some\namespace');
-
-        $sut->addMagicCall(false);
-        $sut->setClassName('SomeClass');
-        $sut->setInterfaceName('some\namespace\Interface');
-        $markup = <<< EOC
-namespace some\\namespace;
-
-class SomeClass implements some\\namespace\\Interface {
-
-    public function someMethod(array \$list, stdClass \$object){
-        return someMethod(\$list, \$object);
-    }
-
-}
-EOC;
-        $this->assertEquals($markup, $sut->getClassMarkup());
-    }
-
-    /**
-     * @test
-     * it should return properly formatted class with two functions
-     */
-    public function it_should_return_properly_formatted_class_with_two_functions()
-    {
-        $sut = new AdapterClassGenerator([new ReflectionFunction('someMethod'), new ReflectionFunction('noArgs')]);
-        $sut->setNamespace('some\namespace');
-
-        $sut->addMagicCall(false);
-        $sut->setClassName('SomeClass');
-        $sut->setInterfaceName('some\namespace\Interface');
-        $markup = <<< EOC
-namespace some\\namespace;
-
-class SomeClass implements some\\namespace\\Interface {
-
-    public function someMethod(array \$list, stdClass \$object){
-        return someMethod(\$list, \$object);
-    }
-
-    public function noArgs(){
-        return noArgs();
-    }
-
-}
-EOC;
-        $this->assertEquals($markup, $sut->getClassMarkup());
-    }
-
-    /**
-     * @test
-     * it should properly format a class with comments and methods
-     */
-    public function it_should_properly_format_a_class_with_comments_and_methods()
-    {
-        $sut = new AdapterClassGenerator([new ReflectionFunction('someMethod'), new ReflectionFunction('noArgs')]);
-        $sut->setFileComment("some\ncomment");
-        $sut->setClassComment("blah\nblah");
-        $sut->setNamespace('some\\namespace');
-
-        $sut->addMagicCall(false);
-        $sut->setClassName('SomeClass');
-        $sut->setInterfaceName('some\namespace\Interface');
-        $markup = <<< EOC
-/**
- * some
- * comment
- */
-
-namespace some\\namespace;
-
-/**
- * blah
- * blah
- */
-class SomeClass implements some\\namespace\\Interface {
-
-    public function someMethod(array \$list, stdClass \$object){
-        return someMethod(\$list, \$object);
-    }
-
-    public function noArgs(){
-        return noArgs();
-    }
 
 }
 EOC;
@@ -391,7 +307,8 @@ EOC;
         $markup = <<< EOC
 class SomeClass {
 
-    public function array_func(array &\$array){
+    public function array_func(array &\$array)
+    {
         return array_func(\$array);
     }
 
@@ -414,7 +331,7 @@ EOC;
 
         $sut = AdapterClassGenerator::constructFromJson($this->jsonFile);
 
-        $this->assertInstanceOf('tad\DependencyMocker\AdapterClassGenerator', $sut);
+        $this->assertInstanceOf('tad\Generators\Adapter\AdapterClassGenerator', $sut);
         $this->assertEquals($expected, $sut->getFunctions());
     }
 
@@ -432,7 +349,7 @@ EOC;
 
         $sut = AdapterClassGenerator::constructFromJson($this->jsonFile);
 
-        $this->assertInstanceOf('tad\DependencyMocker\AdapterClassGenerator', $sut);
+        $this->assertInstanceOf('tad\Generators\Adapter\AdapterClassGenerator', $sut);
         $this->assertEquals($expected, $sut->getFunctions());
     }
 
@@ -470,7 +387,8 @@ EOC;
         $markup = <<< EOC
 class SomeClass {
 
-    public function __call(\$function, \$args){
+    public function __call(\$function, \$args)
+    {
         return call_user_func_array(\$function, \$args);
     }
 
@@ -490,11 +408,13 @@ EOC;
         $markup = <<< EOC
 class SomeClass {
 
-    public function __call(\$function, \$args){
+    public function __call(\$function, \$args)
+    {
         return call_user_func_array(\$function, \$args);
     }
 
-    public function someMethod(array \$list, stdClass \$object){
+    public function someMethod(array \$list, stdClass \$object)
+    {
         return someMethod(\$list, \$object);
     }
 
@@ -511,7 +431,7 @@ EOC;
     {
        $sut = new AdapterClassGenerator();
         $sut->setOutputFile($this->outputFile);
-        $this->assertEquals($this->outputFile, $sut->getOuputFile());
+        $this->assertEquals($this->outputFile, $sut->getOutputFile());
     }
 
     /**
@@ -527,13 +447,16 @@ EOC;
 
         $contents = <<< EOC
 <?php
+
 class SomeClass {
 
-    public function __call(\$function, \$args){
+    public function __call(\$function, \$args)
+    {
         return call_user_func_array(\$function, \$args);
     }
 
-    public function someMethod(array \$list, stdClass \$object){
+    public function someMethod(array \$list, stdClass \$object)
+    {
         return someMethod(\$list, \$object);
     }
 

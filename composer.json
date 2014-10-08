@@ -13,13 +13,14 @@
     }],
     "require": {
         "php": ">=5.2.0",
-        "nikic/php-parser": "~1.0.0"
+        "smarty/smarty": "~3.1"
     },
     "require-dev": {
         "codeception/codeception": "*"
     },
     "autoload": {
         "psr-0": {
+            "": "src/",
             "tad_": "src/",
             "tad\\": "src/"
         }

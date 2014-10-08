@@ -6,9 +6,9 @@
  * The interface is used in the class to allow simple mocking of the class
  * using its interface in tests. PHPUnit mocking, for example:
  *
- *     $mockG = $this->getMock('tad_Adapters_IGlobals');
+ *     $mockG = $this->getMock('tad_Adapters_GlobalsInterface');
  */
-interface tad_Adapters_IGlobals
+interface tad_Adapters_GlobalsInterface extends PHP52Safe
 {
     /**
      * Gets or sets the $_GLOBALS array or a variable stored in it.

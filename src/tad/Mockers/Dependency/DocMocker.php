@@ -1,5 +1,7 @@
 <?php
-namespace tad\DependencyMocker;
+namespace tad\Mockers\Dependency;
+use tad\Mockers\Dependency\Utility\TestCase;
+
 /**
  * Class DocMocker
  *
@@ -11,7 +13,7 @@ namespace tad\DependencyMocker;
  *     // set expectations and return values on mocked objects
  *     $mockedDependencies->DependencyOne->expects(...
  */
-class DocMocker implements IDependencyMocker
+class DocMocker implements DependencyMockerInterface
 {
     protected $className;
     protected $methodName;

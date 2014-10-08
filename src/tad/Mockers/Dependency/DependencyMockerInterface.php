@@ -1,7 +1,7 @@
 <?php
-namespace tad\DependencyMocker;
+namespace tad\Mockers\Dependency;
 
-interface IDependencyMocker
+interface DependencyMockerInterface
 {
 
     /**

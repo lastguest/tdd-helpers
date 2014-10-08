@@ -1,6 +1,7 @@
 <?php
 
-use tad\DependencyMocker\MethodReader;
+
+use tad\Mockers\Dependency\Utility\MethodReader;
 
 class ClassToRead
 {
