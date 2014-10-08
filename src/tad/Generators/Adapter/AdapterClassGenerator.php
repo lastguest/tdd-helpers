@@ -145,6 +145,9 @@ class AdapterClassGenerator
     }
 
     /**
+     * @param $string
+     * @throws \Exception
+     * @throws \SmartyException
      * @return string
      */
     protected function getCommentedString($string)
@@ -214,7 +217,7 @@ class AdapterClassGenerator
         $this->outputFilePath = $filePath;
     }
 
-    public function getOuputFile()
+    public function getOutputFile()
     {
         return $this->outputFilePath;
     }

@@ -431,7 +431,7 @@ EOC;
     {
        $sut = new AdapterClassGenerator();
         $sut->setOutputFile($this->outputFile);
-        $this->assertEquals($this->outputFile, $sut->getOuputFile());
+        $this->assertEquals($this->outputFile, $sut->getOutputFile());
     }
 
     /**
