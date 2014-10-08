@@ -12,7 +12,8 @@
         "role": "Developer"
     }],
     "require": {
-        "php": ">=5.2.0"
+        "php": ">=5.2.0",
+        "smarty/smarty": "~3.1"
     },
     "require-dev": {
         "codeception/codeception": "*"

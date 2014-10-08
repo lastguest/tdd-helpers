@@ -12,27 +12,34 @@ class AdapterClassGenerator
     protected $interfaceName;
     protected $functions;
     protected $newline = "\n";
-    protected $tab = '    ';
-
+    protected $tab = "\t";
     protected $addMagicCall = true;
     protected $outputFilePath;
+    protected $smarty;
 
-    public function __construct(array $functions = null)
+    public function __construct(array $functions = null, \Smarty $smarty = null)
     {
-        if (!is_array($functions)) {
-            return;
+        if (is_array($functions)) {
+            array_walk($functions, function ($el, $index) {
+                if (!is_a($el, 'ReflectionFunction')) {
+                    throw new \Exception("All array elements should be ReflectionFunction instances, $index is not");
+                }
+            });
+            $this->functions = $functions;
         }
-        array_walk($functions, function ($el, $index) {
-            if (!is_a($el, 'ReflectionFunction')) {
-                throw new \Exception("All array elements should be ReflectionFunction instances, $index is not");
-            }
-        });
-        $this->functions = $functions;
+
+        $this->smarty = $smarty ? $smarty : new \Smarty();
     }
 
     public function getMethodMarkup(\ReflectionFunction $method)
     {
-        return $this->getTabbedMethodMarkup($method, false);
+        $vars = array(
+            'methodName' => $method->name,
+            'signatureArgsString' => $this->getSignatureArgsString($method),
+            'callArgsString' => $this->getCallArgsString($method)
+        );
+        $this->smarty->assign($vars);
+        return $this->smarty->fetch($this->getTemplate('method_common'));
     }
 
     /**
@@ -57,7 +64,7 @@ class AdapterClassGenerator
             }
             return sprintf('%s%s$%s%s', $typeHintedClass, $reference, $parameter->name, $optionalOrDefaultValue);
         }, $method->getParameters());
-        return $argsStrings;
+        return implode(', ', $argsStrings);
     }
 
     /**
@@ -91,19 +98,18 @@ class AdapterClassGenerator
 
     public function getClassMarkup()
     {
-        $fileComment = $this->fileComment ? $this->getCommentedString($this->fileComment) . $this->newline : '';
-        $nsString = $this->ns ? sprintf('namespace %s;%s', $this->ns, $this->newline . $this->newline) : '';
-        $classComment = $this->classComment ? $this->getCommentedString($this->classComment) : '';
-        $interfaceEntry = $this->interfaceName ? sprintf(' implements %s', $this->interfaceName) : '';
-        $out = sprintf('%s%s%sclass %s%s {', $fileComment, $nsString, $classComment, $this->className, $interfaceEntry);
-        $magicCall = $this->addMagicCall ? $this->getMagicCallMarkup() : '';
-        $out .= sprintf('%s%s%s', $this->newline, $magicCall, $this->getMethodsMarkup());
-        $out .= '}';
+        $vars = array(
+            'fileComment' => $this->fileComment ? $this->getCommentedString($this->fileComment) : false,
+            'namespace' => $this->ns ? sprintf('namespace %s;', $this->ns) : false,
+            'classComment' => $this->classComment ? $this->getCommentedString($this->classComment) : false,
+            'className' => $this->className,
+            'interface' => $this->interfaceName ? $this->interfaceName : false,
+            'magicCall' => $this->addMagicCall ? $this->getMagicCallMarkup() : false,
+            'methods' => $this->getMethodsMarkup()
+        );
 
-        // remove triple new lines
-        $out = preg_replace('/\n{3}/', "\n\n", $out);
-
-        return $out;
+        $this->smarty->assign($vars);
+        return $this->smarty->fetch($this->getTemplate('class'));
     }
 
     public function setNamespace($namespace)
@@ -143,37 +149,20 @@ class AdapterClassGenerator
      */
     protected function getCommentedString($string)
     {
-        return sprintf('/**%s%s%s */%s', $this->newline, $this->getCommentedLines($string), $this->newline, $this->newline);
+        $this->smarty->assign('comment', $string);
+        return $this->smarty->fetch($this->getTemplate('comment'));
     }
 
     protected function getMethodsMarkup(array $functions = null)
     {
         $functions = $functions ? $functions : $this->functions;
         if (!$functions) {
-            return '';
+            return false;
         }
         $methods = array_map(function ($function) {
-            return $this->getTabbedMethodMarkup($function);
+            return $this->getMethodMarkup($function);
         }, $functions);
-        return implode("\n", $methods) . $this->newline . $this->newline;
-    }
-
-    /**
-     * @param \ReflectionFunction $method
-     * @return string
-     */
-    protected function getTabbedMethodMarkup(\ReflectionFunction $method, $indent = true)
-    {
-        $indent = $indent ? $this->tab : '';
-        $signatureArgsString = $this->getSignatureArgsString($method);
-        $callArgsString = $this->getCallArgsString($method);
-
-        $out = $indent ? $this->newline : '';
-        $out .= $indent . sprintf('public function %s(%s){', $method->name, implode(', ', $signatureArgsString));
-        $out .= sprintf('%sreturn %s(%s);', $this->newline . $indent . $this->tab, $method->name, $callArgsString);
-        $out .= $this->newline . $indent . '}';
-
-        return $out;
+        return implode($this->newline, $methods);
     }
 
     public function getFunctions()
@@ -214,14 +203,7 @@ class AdapterClassGenerator
 
     protected function getMagicCallMarkup()
     {
-        $out = $this->newline;
-        $out .= $this->tab . 'public function __call($function, $args){';
-        $out .= $this->newline . $this->tab;
-        $out .= $this->tab . 'return call_user_func_array($function, $args);';
-        $out .= $this->newline;
-        $out .= $this->tab . '}' . $this->newline . $this->newline;
-
-        return $out;
+        return $this->smarty->fetch($this->getTemplate('method_call'));
     }
 
     public function setOutputFile($filePath)
@@ -242,12 +224,25 @@ class AdapterClassGenerator
         if (!$this->outputFilePath) {
             return;
         }
-
-        $contents = '<?php';
-        $contents .= $this->newline;
-        $contents .= $this->getClassMarkup();
+        $vars = array(
+            'class' => $this->getClassMarkup()
+        );
+        $this->smarty->assign($vars);
+        $contents = $this->smarty->fetch($this->getTemplate('file'));
 
         file_put_contents($this->outputFilePath, $contents);
+    }
+
+    private function getTemplate($templateName)
+    {
+        if (!is_string($templateName)) {
+            throw new \Exception('Template name must be a string');
+        }
+        $templateFile = dirname(__FILE__) . '/templates/' . $templateName . '.tpl';
+        if (!file_exists($templateFile)) {
+            throw new \Exception("Template $templateName does not exist");
+        }
+        return $templateFile;
     }
 
 }
