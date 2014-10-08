@@ -31,7 +31,7 @@ class AdapterClassGenerator
             $this->functions = $functions;
         }
 
-        $this->smarty = $smarty ? $smarty : new \Smarty();
+        $this->smarty = $smarty ? $smarty : \tad_Base_SmartyFactory::on(__FILE__);
         $this->fileWriter = $fileWriter ? $fileWriter : null;
     }
 
@@ -133,7 +133,7 @@ class AdapterClassGenerator
             'class' => $this->getClassMarkup()
         );
         $this->smarty->assign($vars);
-        $contents = $this->smarty->fetch($this->getTemplate('file'));
+        $contents = $this->smarty->fetch('file.tpl');
         if (!$this->fileWriter) {
             $this->fileWriter = new FileWriter($this->outputFilePath, $contents);
         }
@@ -153,7 +153,7 @@ class AdapterClassGenerator
         );
 
         $this->smarty->assign($vars);
-        return $this->smarty->fetch($this->getTemplate('class'));
+        return $this->smarty->fetch('class.tpl');
     }
 
     /**
@@ -165,12 +165,12 @@ class AdapterClassGenerator
     protected function getCommentedString($string)
     {
         $this->smarty->assign('comment', $string);
-        return $this->smarty->fetch($this->getTemplate('comment'));
+        return $this->smarty->fetch('comment.tpl');
     }
 
     protected function getMagicCallMarkup()
     {
-        return $this->smarty->fetch($this->getTemplate('method_call'));
+        return $this->smarty->fetch('method_call.tpl');
     }
 
     protected function getMethodsMarkup(array $functions = null)
@@ -193,7 +193,7 @@ class AdapterClassGenerator
             'callArgsString' => $this->getCallArgsString($method)
         );
         $this->smarty->assign($vars);
-        return $this->smarty->fetch($this->getTemplate('method_common'));
+        return $this->smarty->fetch('method_common.tpl');
     }
 
     /**
@@ -232,18 +232,6 @@ class AdapterClassGenerator
         }, $method->getParameters());
         $callArgs = implode(', ', $callArgs);
         return $callArgs;
-    }
-
-    private function getTemplate($templateName)
-    {
-        if (!is_string($templateName)) {
-            throw new \Exception('Template name must be a string');
-        }
-        $templateFile = dirname(__FILE__) . '/templates/' . $templateName . '.tpl';
-        if (!file_exists($templateFile)) {
-            throw new \Exception("Template $templateName does not exist");
-        }
-        return $templateFile;
     }
 
     protected function getCommentedLines($string)

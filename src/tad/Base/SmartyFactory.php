@@ -14,10 +14,12 @@ class tad_Base_SmartyFactory implements PHP52Safe
         $templateDir = $dir . '/templates';
         $cacheDir = $templateDir . '/cache';
         $compileDir = $templateDir . '/compiled';
+        $configDir = $templateDir . '/config/';
 
         $smarty->setTemplateDir($templateDir);
         $smarty->setCacheDir($cacheDir);
         $smarty->setCompileDir($compileDir);
+        $smarty->setConfigDir($configDir);
 
         return $smarty;
     }

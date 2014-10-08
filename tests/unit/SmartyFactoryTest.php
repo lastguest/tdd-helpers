@@ -29,11 +29,13 @@ class SmartyFactoryTest extends \PHPUnit_Framework_TestCase
         $templatesDir = $dir . '/templates/';
         $templatesCacheDir = $templatesDir . 'cache/';
         $templatesCompiledDir = $templatesDir . 'compiled/';
+        $configDir = $templatesDir . 'config/';
 
         $sut = tad_Base_SmartyFactory::on(__FILE__);
 
         $this->assertEquals($templatesDir, $sut->getTemplateDir()[0]);
         $this->assertEquals($templatesCacheDir, $sut->getCacheDir());
         $this->assertEquals($templatesCompiledDir, $sut->getCompileDir());
+        $this->assertEquals($configDir, $sut->getConfigDir(0));
     }
 }
