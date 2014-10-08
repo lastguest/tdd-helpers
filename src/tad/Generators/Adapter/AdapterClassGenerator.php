@@ -4,22 +4,19 @@ namespace tad\Generators\Adapter;
 
 
 use tad\Generators\Adapter\Utility\FileWriter;
+use tad\Generators\Base\ClassGeneratorBase;
 
-class AdapterClassGenerator
+class AdapterClassGenerator extends ClassGeneratorBase
 {
-    protected $fileComment;
-    protected $ns;
-    protected $classComment;
-    protected $className;
-    protected $interfaceName;
     protected $functions;
-    protected $newline = "\n";
-    protected $tab = "\t";
     protected $addMagicCall = true;
-    protected $outputFilePath;
-    protected $fileWriter;
-    protected $smarty;
 
+    /**
+     * @param array $functions
+     * @param \Smarty $smarty
+     * @param FileWriter $fileWriter
+     * @throws \Exception If an element of the `functions` array is not a ReflectionFunction instance.
+     */
     public function __construct(array $functions = null, \Smarty $smarty = null, FileWriter $fileWriter = null)
     {
         if (is_array($functions)) {
@@ -31,10 +28,17 @@ class AdapterClassGenerator
             $this->functions = $functions;
         }
 
-        $this->smarty = $smarty ? $smarty : new \Smarty();
+        $this->smarty = $smarty ? $smarty : \tad_Base_SmartyFactory::on(__FILE__);
         $this->fileWriter = $fileWriter ? $fileWriter : null;
     }
 
+    /**
+     * Returns an instance built on the functions defined in the json file.
+     *
+     * @param $jsonFilePath
+     * @return AdapterClassGenerator
+     * @throws \Exception If the json file is not string, doesn't exist or the stored value is not an array.
+     */
     public static function constructFromJson($jsonFilePath)
     {
         if (!is_string($jsonFilePath)) {
@@ -56,90 +60,37 @@ class AdapterClassGenerator
         return new self($refFunctions);
     }
 
-    public function setClassName($className)
-    {
-        if (!is_string($className)) {
-            throw new \Exception('Class name must be a string');
-        }
-        $this->className = $className;
-    }
-
-    public function setInterfaceName($interfaceName)
-    {
-        if (!is_string($interfaceName)) {
-            throw new \Exception('Interface name must be a string');
-        }
-        $this->interfaceName = $interfaceName;
-    }
-
-    public function setNamespace($namespace)
-    {
-        if (!is_string($namespace)) {
-            throw new \Exception('namespace must be a string');
-        }
-        $this->ns = ltrim($namespace, '\\');
-    }
-
-    public function setClassComment($classComment)
-    {
-        if (!is_string($classComment)) {
-            throw new \Exception('Class comment must be a string');
-        }
-        $this->classComment = $classComment;
-    }
-
-    public function setFileComment($fileComment)
-    {
-        if (!is_string($fileComment)) {
-            throw new \Exception('File comment must be a string');
-        }
-        $this->fileComment = $fileComment;
-    }
-
+    /**
+     * @return array
+     */
     public function getFunctions()
     {
         return $this->functions;
     }
 
+    /**
+     * @return bool
+     */
     public function willAddMagicCall()
     {
         return $this->addMagicCall;
     }
 
+    /**
+     * @param bool $toggle
+     */
     public function addMagicCall($toggle = true)
     {
         $this->addMagicCall = $toggle ? true : false;
     }
 
-    public function setOutputFile($filePath)
-    {
-        if (!is_string($filePath)) {
-            throw new \Exception('File path should be a string');
-        }
-        $this->outputFilePath = $filePath;
-    }
-
-    public function getOutputFile()
-    {
-        return $this->outputFilePath;
-    }
-
-    public function generate()
-    {
-        if (!$this->outputFilePath) {
-            return;
-        }
-        $vars = array(
-            'class' => $this->getClassMarkup()
-        );
-        $this->smarty->assign($vars);
-        $contents = $this->smarty->fetch($this->getTemplate('file'));
-        if (!$this->fileWriter) {
-            $this->fileWriter = new FileWriter($this->outputFilePath, $contents);
-        }
-        $this->fileWriter->write();
-    }
-
+    /**
+     * Returns the PHP code for an adapter class wrapping specified functions.
+     *
+     * @return string
+     * @throws \Exception
+     * @throws \SmartyException
+     */
     public function getClassMarkup()
     {
         $vars = array(
@@ -153,24 +104,12 @@ class AdapterClassGenerator
         );
 
         $this->smarty->assign($vars);
-        return $this->smarty->fetch($this->getTemplate('class'));
-    }
-
-    /**
-     * @param $string
-     * @throws \Exception
-     * @throws \SmartyException
-     * @return string
-     */
-    protected function getCommentedString($string)
-    {
-        $this->smarty->assign('comment', $string);
-        return $this->smarty->fetch($this->getTemplate('comment'));
+        return $this->smarty->fetch('class.tpl');
     }
 
     protected function getMagicCallMarkup()
     {
-        return $this->smarty->fetch($this->getTemplate('method_call'));
+        return $this->smarty->fetch('method_call.tpl');
     }
 
     protected function getMethodsMarkup(array $functions = null)
@@ -185,22 +124,26 @@ class AdapterClassGenerator
         return implode($this->newline, $methods);
     }
 
-    public function getMethodMarkup(\ReflectionFunction $method)
+    /**
+     * Returns the PHP code for a method wrapping a function.
+     *
+     * @param \ReflectionFunction $function
+     * @return string
+     * @throws \Exception
+     * @throws \SmartyException
+     */
+    public function getMethodMarkup(\ReflectionFunction $function)
     {
         $vars = array(
-            'methodName' => $method->name,
-            'signatureArgsString' => $this->getSignatureArgsString($method),
-            'callArgsString' => $this->getCallArgsString($method)
+            'methodName' => $function->name,
+            'signatureArgsString' => $this->getSignatureArgsString($function),
+            'callArgsString' => $this->getCallArgsString($function)
         );
         $this->smarty->assign($vars);
-        return $this->smarty->fetch($this->getTemplate('method_common'));
+        return $this->smarty->fetch('method_common.tpl');
     }
 
-    /**
-     * @param \ReflectionFunction $method
-     * @return array
-     */
-    protected function getSignatureArgsString(\ReflectionFunction $method)
+    protected function getSignatureArgsString(\ReflectionFunction $function)
     {
         $argsStrings = array_map(function ($parameter) {
             $typeHintedClass = '';
@@ -217,41 +160,37 @@ class AdapterClassGenerator
                 $optionalOrDefaultValue = ' = ' . (string)$parameter->getDefaultValue();
             }
             return sprintf('%s%s$%s%s', $typeHintedClass, $reference, $parameter->name, $optionalOrDefaultValue);
-        }, $method->getParameters());
+        }, $function->getParameters());
         return implode(', ', $argsStrings);
     }
 
-    /**
-     * @param \ReflectionFunction $method
-     * @return array|string
-     */
-    protected function getCallArgsString(\ReflectionFunction $method)
+    protected function getCallArgsString(\ReflectionFunction $function)
     {
         $callArgs = array_map(function ($parameter) {
             return sprintf('$%s', $parameter->name);
-        }, $method->getParameters());
+        }, $function->getParameters());
         $callArgs = implode(', ', $callArgs);
         return $callArgs;
     }
 
-    private function getTemplate($templateName)
+    /**
+     * Writes the generated class to file.
+     *
+     * @throws \Exception
+     */
+    public function generate()
     {
-        if (!is_string($templateName)) {
-            throw new \Exception('Template name must be a string');
+        if (!$this->outputFilePath) {
+            throw new \Exception('Output file is not set');
         }
-        $templateFile = dirname(__FILE__) . '/templates/' . $templateName . '.tpl';
-        if (!file_exists($templateFile)) {
-            throw new \Exception("Template $templateName does not exist");
+        $vars = array(
+            'class' => $this->getClassMarkup()
+        );
+        $this->smarty->assign($vars);
+        $contents = $this->smarty->fetch('file.tpl');
+        if (!$this->fileWriter) {
+            $this->fileWriter = new FileWriter($this->outputFilePath, $contents);
         }
-        return $templateFile;
+        $this->fileWriter->write();
     }
-
-    protected function getCommentedLines($string)
-    {
-        $lines = array_map(function ($line) {
-            return sprintf(' * %s', $line);
-        }, explode("\n", $string));
-        return implode("\n", $lines);
-    }
-
 }
