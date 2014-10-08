@@ -1,9 +1,10 @@
 <?php
 
-namespace tad\Base;
+namespace tad\Generators\Base;
 
 
-use tad\Generators\Adapter\Utility\FileWriter;
+use tad\Base\FileWriterInterface;
+use tad\Generators\Base\ClassGeneratorInterface;
 
 abstract class ClassGeneratorBase implements ClassGeneratorInterface
 {
@@ -170,30 +171,22 @@ abstract class ClassGeneratorBase implements ClassGeneratorInterface
     }
 
     /**
+     * Writes the generated class to file.
+     *
      * @throws \Exception
      */
-    public function generate()
-    {
-        if (!$this->outputFilePath) {
-            throw new \Exception('Output file is not set');
-        }
-        $vars = array(
-            'class' => $this->getClassMarkup()
-        );
-        $this->smarty->assign($vars);
-        $contents = $this->smarty->fetch('file.tpl');
-        if (!$this->fileWriter) {
-            $this->fileWriter = new FileWriter($this->outputFilePath, $contents);
-        }
-        $this->fileWriter->write();
-    }
+    public abstract function generate();
 
     /**
+     * Returns the generated class PHP code.
+     *
      * @return string
      */
     public abstract function getClassMarkup();
 
     /**
+     * Returns the string in doc block comment format.
+     *
      * @param $string
      * @throws \Exception
      * @throws \SmartyException
@@ -204,22 +197,4 @@ abstract class ClassGeneratorBase implements ClassGeneratorInterface
         $this->smarty->assign('comment', $string);
         return $this->smarty->fetch('comment.tpl');
     }
-
-    /**
-     * @param $string
-     * @return string
-     */
-    public function getCommentedLines($string)
-    {
-        $lines = array_map(function ($line) {
-            return sprintf(' * %s', $line);
-        }, explode("\n", $string));
-        return implode("\n", $lines);
-    }
-
-    /**
-     * @param \ReflectionFunction $method
-     * @return mixed
-     */
-    public abstract function getMethodMarkup(\ReflectionFunction $method);
 }

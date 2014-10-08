@@ -3,14 +3,20 @@
 namespace tad\Generators\Adapter;
 
 
-use tad\Base\ClassGeneratorBase;
 use tad\Generators\Adapter\Utility\FileWriter;
+use tad\Generators\Base\ClassGeneratorBase;
 
 class AdapterClassGenerator extends ClassGeneratorBase
 {
     protected $functions;
     protected $addMagicCall = true;
 
+    /**
+     * @param array $functions
+     * @param \Smarty $smarty
+     * @param FileWriter $fileWriter
+     * @throws \Exception If an element of the `functions` array is not a ReflectionFunction instance.
+     */
     public function __construct(array $functions = null, \Smarty $smarty = null, FileWriter $fileWriter = null)
     {
         if (is_array($functions)) {
@@ -26,6 +32,13 @@ class AdapterClassGenerator extends ClassGeneratorBase
         $this->fileWriter = $fileWriter ? $fileWriter : null;
     }
 
+    /**
+     * Returns an instance built on the functions defined in the json file.
+     *
+     * @param $jsonFilePath
+     * @return AdapterClassGenerator
+     * @throws \Exception If the json file is not string, doesn't exist or the stored value is not an array.
+     */
     public static function constructFromJson($jsonFilePath)
     {
         if (!is_string($jsonFilePath)) {
@@ -47,21 +60,37 @@ class AdapterClassGenerator extends ClassGeneratorBase
         return new self($refFunctions);
     }
 
+    /**
+     * @return array
+     */
     public function getFunctions()
     {
         return $this->functions;
     }
 
+    /**
+     * @return bool
+     */
     public function willAddMagicCall()
     {
         return $this->addMagicCall;
     }
 
+    /**
+     * @param bool $toggle
+     */
     public function addMagicCall($toggle = true)
     {
         $this->addMagicCall = $toggle ? true : false;
     }
 
+    /**
+     * Returns the PHP code for an adapter class wrapping specified functions.
+     *
+     * @return string
+     * @throws \Exception
+     * @throws \SmartyException
+     */
     public function getClassMarkup()
     {
         $vars = array(
@@ -95,22 +124,26 @@ class AdapterClassGenerator extends ClassGeneratorBase
         return implode($this->newline, $methods);
     }
 
-    public function getMethodMarkup(\ReflectionFunction $method)
+    /**
+     * Returns the PHP code for a method wrapping a function.
+     *
+     * @param \ReflectionFunction $function
+     * @return string
+     * @throws \Exception
+     * @throws \SmartyException
+     */
+    public function getMethodMarkup(\ReflectionFunction $function)
     {
         $vars = array(
-            'methodName' => $method->name,
-            'signatureArgsString' => $this->getSignatureArgsString($method),
-            'callArgsString' => $this->getCallArgsString($method)
+            'methodName' => $function->name,
+            'signatureArgsString' => $this->getSignatureArgsString($function),
+            'callArgsString' => $this->getCallArgsString($function)
         );
         $this->smarty->assign($vars);
         return $this->smarty->fetch('method_common.tpl');
     }
 
-    /**
-     * @param \ReflectionFunction $method
-     * @return array
-     */
-    protected function getSignatureArgsString(\ReflectionFunction $method)
+    protected function getSignatureArgsString(\ReflectionFunction $function)
     {
         $argsStrings = array_map(function ($parameter) {
             $typeHintedClass = '';
@@ -127,21 +160,37 @@ class AdapterClassGenerator extends ClassGeneratorBase
                 $optionalOrDefaultValue = ' = ' . (string)$parameter->getDefaultValue();
             }
             return sprintf('%s%s$%s%s', $typeHintedClass, $reference, $parameter->name, $optionalOrDefaultValue);
-        }, $method->getParameters());
+        }, $function->getParameters());
         return implode(', ', $argsStrings);
     }
 
-    /**
-     * @param \ReflectionFunction $method
-     * @return array|string
-     */
-    protected function getCallArgsString(\ReflectionFunction $method)
+    protected function getCallArgsString(\ReflectionFunction $function)
     {
         $callArgs = array_map(function ($parameter) {
             return sprintf('$%s', $parameter->name);
-        }, $method->getParameters());
+        }, $function->getParameters());
         $callArgs = implode(', ', $callArgs);
         return $callArgs;
     }
 
+    /**
+     * Writes the generated class to file.
+     *
+     * @throws \Exception
+     */
+    public function generate()
+    {
+        if (!$this->outputFilePath) {
+            throw new \Exception('Output file is not set');
+        }
+        $vars = array(
+            'class' => $this->getClassMarkup()
+        );
+        $this->smarty->assign($vars);
+        $contents = $this->smarty->fetch('file.tpl');
+        if (!$this->fileWriter) {
+            $this->fileWriter = new FileWriter($this->outputFilePath, $contents);
+        }
+        $this->fileWriter->write();
+    }
 }
