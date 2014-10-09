@@ -72,6 +72,7 @@ abstract class ClassGeneratorBase implements ClassGeneratorInterface
     public function setSmarty($smarty)
     {
         $this->smarty = $smarty;
+        return $this;
     }
 
     /**
@@ -88,6 +89,7 @@ abstract class ClassGeneratorBase implements ClassGeneratorInterface
     public function setFileWriter(FileWriterInterface $fileWriter)
     {
         $this->fileWriter = $fileWriter;
+        return $this;
     }
 
     /**
@@ -100,6 +102,7 @@ abstract class ClassGeneratorBase implements ClassGeneratorInterface
             throw new \Exception('Class name must be a string');
         }
         $this->className = $className;
+        return $this;
     }
 
     /**
@@ -124,6 +127,7 @@ abstract class ClassGeneratorBase implements ClassGeneratorInterface
             throw new \Exception('namespace must be a string');
         }
         $this->ns = ltrim($namespace, '\\');
+        return $this;
     }
 
     /**
@@ -136,6 +140,7 @@ abstract class ClassGeneratorBase implements ClassGeneratorInterface
             throw new \Exception('Class comment must be a string');
         }
         $this->classComment = $classComment;
+        return $this;
     }
 
     /**
@@ -148,6 +153,7 @@ abstract class ClassGeneratorBase implements ClassGeneratorInterface
             throw new \Exception('File comment must be a string');
         }
         $this->fileComment = $fileComment;
+        return $this;
     }
 
     /**
@@ -160,6 +166,7 @@ abstract class ClassGeneratorBase implements ClassGeneratorInterface
             throw new \Exception('File path should be a string');
         }
         $this->outputFilePath = $filePath;
+        return $this;
     }
 
     /**
