@@ -39,6 +39,8 @@ class CollectorAdapter
     public function __construct()
     {
         \$this->called = array();
+        \$this->jsonFilePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'functions_dump' . time();
+        \$this->shouldAppend = false;
     }
 
     public function __call(\$function, \$arguments)
@@ -119,6 +121,8 @@ class MyCollector implements myInterface
     public function __construct()
     {
         \$this->called = array();
+        \$this->jsonFilePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'functions_dump' . time();
+        \$this->shouldAppend = false;
     }
 
     public function __call(\$function, \$arguments)

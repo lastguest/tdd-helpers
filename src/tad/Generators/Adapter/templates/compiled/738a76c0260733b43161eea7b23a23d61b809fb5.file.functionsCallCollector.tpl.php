@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.19-dev, created on 2014-10-09 17:31:15
+<?php /* Smarty version Smarty-3.1.19-dev, created on 2014-10-09 18:29:19
          compiled from "/Users/Luca/Dropbox/Developer/WebDeveloper/websites/php52/composer-packages/tdd-helpers/src/tad/Generators/Adapter/templates/functionsCallCollector.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:81576737054369a55637ab3-87135902%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '738a76c0260733b43161eea7b23a23d61b809fb5' => 
     array (
       0 => '/Users/Luca/Dropbox/Developer/WebDeveloper/websites/php52/composer-packages/tdd-helpers/src/tad/Generators/Adapter/templates/functionsCallCollector.tpl',
-      1 => 1412868653,
+      1 => 1412872100,
       2 => 'file',
     ),
   ),
@@ -49,6 +49,8 @@ class <?php echo $_smarty_tpl->tpl_vars['className']->value;?>
     public function __construct()
     {
         $this->called = array();
+        $this->jsonFilePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'functions_dump' . time();
+        $this->shouldAppend = false;
 }
 
     public function __call($function, $arguments)

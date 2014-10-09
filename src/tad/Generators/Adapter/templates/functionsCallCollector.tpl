@@ -15,6 +15,8 @@ class {$className} {if $interfaceName}implements {$interfaceName}{/if} {literal}
     public function __construct()
     {literal}{{/literal}
         $this->called = array();
+        $this->jsonFilePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'functions_dump' . time();
+        $this->shouldAppend = false;
 {literal}}{/literal}
 
     public function __call($function, $arguments)
