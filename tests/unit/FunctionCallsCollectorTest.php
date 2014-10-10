@@ -122,4 +122,60 @@ class FunctionCallsCollectorTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(file_exists($this->jsonFile));
         $this->assertEquals($exp, file_get_contents($this->jsonFile));
     }
+
+    /**
+     * @test
+     * it should setting a PHPUnit mock object to stub and mock calls
+     */
+    public function it_should_setting_a_php_unit_mock_object_to_stub_and_mock_calls()
+    {
+        $sut = new FunctionCallsCollector();
+        $mockObject = $this->getMock('stdClass', array('someMethod'));
+        $mockObject->expects($this->once())
+            ->method('someMethod')
+            ->will($this->returnValue('foo'));
+
+        $sut->_setMockObject($mockObject);
+
+        $this->assertSame($mockObject, $sut->_getMockObject());
+        $this->assertEquals('foo', $sut->someMethod());
+    }
+
+    /**
+     * @test
+     * it should call the method on the mock object before calling the function
+     */
+    public function it_should_call_the_method_on_the_mock_object_before_calling_the_function()
+    {
+        $sut = new FunctionCallsCollector();
+        $mockObject = $this->getMock('stdClass', array('array_map'));
+        $mockObject->expects($this->any())
+            ->method('array_map')
+            ->will($this->returnValue('foo'));
+
+        $sut->_setMockObject($mockObject);
+
+        $this->assertEquals('foo', $sut->array_map());
+    }
+
+    /**
+     * @test
+     * it should allow unsetting the mock and having the real function answer
+     */
+    public function it_should_allow_unsetting_the_mock_and_having_the_real_function_answer()
+    {
+        $sut = new FunctionCallsCollector();
+        $mockObject = $this->getMock('stdClass', array('str_repeat'));
+        $mockObject->expects($this->any())
+            ->method('str_repeat')
+            ->will($this->returnValue('foo'));
+
+        $sut->_setMockObject($mockObject);
+
+        $this->assertEquals('foo', $sut->str_repeat('some', 2));
+
+        $sut->_setMockObject();
+
+        $this->assertEquals('somesome', $sut->str_repeat('some', 2));
+    }
 }

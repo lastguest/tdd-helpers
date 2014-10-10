@@ -52,6 +52,7 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
             throw new \Exception('Json file path must be a string');
         }
         $this->jsonFilePath = $jsonFilePath;
+        return $this;
     }
 
     public function _getJsonFilePath()
@@ -73,6 +74,7 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
     public function _shouldAppend($shouldAppend = true)
     {
         $this->shouldAppend = $shouldAppend ? true : false;
+        return $this;
     }
 
     /**
@@ -89,6 +91,7 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
     public function _setMockObject(\PHPUnit_Framework_MockObject_MockObject $mockObject = null)
     {
         $this->mockObject = $mockObject;
+        return $this;
     }
 
 }
