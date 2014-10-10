@@ -26,7 +26,6 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
     public function __construct(array $called = null, $jsonFilePath = null, $shoulAppend = false, \PHPUnit_Framework_MockObject_MockObject $mockObject = null)
     {
         $this->called = array();
-        $this->jsonFilePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'functions_dump' . time();
         $this->shouldAppend = false;
         $this->mockObject = $mockObject ? $mockObject : null;
     }
