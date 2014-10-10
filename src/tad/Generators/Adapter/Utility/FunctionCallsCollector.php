@@ -3,15 +3,32 @@ namespace tad\Generators\Adapter\Utility;
 
 class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
 {
+    /**
+     * @var array
+     */
     protected $called;
+
+    /**
+     * @var string
+     */
     protected $jsonFilePath;
+
+    /**
+     * @var bool
+     */
     protected $shouldAppend;
 
-    public function __construct()
+    /**
+     * @var null|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockObject;
+
+    public function __construct(array $called = null, $jsonFilePath = null, $shoulAppend = false, \PHPUnit_Framework_MockObject_MockObject $mockObject = null)
     {
         $this->called = array();
         $this->jsonFilePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'functions_dump' . time();
         $this->shouldAppend = false;
+        $this->mockObject = $mockObject ? $mockObject : null;
     }
 
     public function __call($function, $arguments)
@@ -53,6 +70,22 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
     public function _shouldAppend($shouldAppend = true)
     {
         $this->shouldAppend = $shouldAppend ? true : false;
+    }
+
+    /**
+     * @return null|\PHPUnit_Framework_MockObject_MockObject
+     */
+    public function getMockObject()
+    {
+        return $this->mockObject;
+    }
+
+    /**
+     * @param null|\PHPUnit_Framework_MockObject_MockObject $mockObject
+     */
+    public function setMockObject(\PHPUnit_Framework_MockObject_MockObject $mockObject = null)
+    {
+        $this->mockObject = $mockObject;
     }
 
 }
