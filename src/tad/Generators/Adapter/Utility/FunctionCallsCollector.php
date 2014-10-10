@@ -35,7 +35,10 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
     {
         $reflectionFunction = new \ReflectionFunction($function);
         $this->called[$reflectionFunction->name] = $reflectionFunction;
-        return call_user_func_array($function, $arguments);
+
+        $responder = $this->mockObject ? array($this->mockObject, $function) : $function;
+
+        return call_user_func_array($responder, $arguments);
     }
 
     public function _getCalled()
@@ -75,7 +78,7 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
     /**
      * @return null|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function getMockObject()
+    public function _getMockObject()
     {
         return $this->mockObject;
     }
@@ -83,7 +86,7 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
     /**
      * @param null|\PHPUnit_Framework_MockObject_MockObject $mockObject
      */
-    public function setMockObject(\PHPUnit_Framework_MockObject_MockObject $mockObject = null)
+    public function _setMockObject(\PHPUnit_Framework_MockObject_MockObject $mockObject = null)
     {
         $this->mockObject = $mockObject;
     }
