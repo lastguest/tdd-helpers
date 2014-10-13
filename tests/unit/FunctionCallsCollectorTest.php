@@ -49,15 +49,15 @@ class FunctionCallsCollectorTest extends \PHPUnit_Framework_TestCase
     public function it_should_setting_a_php_unit_mock_object_to_stub_and_mock_calls()
     {
         $sut = new FunctionCallsCollector();
-        $mockObject = $this->getMock('stdClass', array('someMethod'));
+        $mockObject = $this->getMock('stdClass', array('some_method_3324'));
         $mockObject->expects($this->once())
-            ->method('someMethod')
+            ->method('some_method_3324')
             ->will($this->returnValue('foo'));
 
         $sut->_setMockObject($mockObject);
 
         $this->assertSame($mockObject, $sut->_getMockObject());
-        $this->assertEquals('foo', $sut->someMethod());
+        $this->assertEquals('foo', $sut->some_method_3324());
     }
 
     /**
@@ -231,7 +231,7 @@ interface Interface2233{
 
 }
 
-function someMethod()
+function some_method_3324()
 {
 }
 
