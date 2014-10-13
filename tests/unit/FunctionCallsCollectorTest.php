@@ -77,54 +77,6 @@ class FunctionCallsCollectorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * it should write the list of called functions to the file when destructing
-     */
-    public function it_should_write_the_list_of_called_functions_to_the_file_when_destructing()
-    {
-        $sut = new FunctionCallsCollector();
-        $sut->_setJsonFilePath($this->jsonFile);
-
-        $sut->ucfirst('some');
-        $sut->ucfirst('some');
-        $sut->ucfirst('some');
-        $sut->str_shuffle('some');
-        $sut->str_shuffle('some');
-        $sut->str_shuffle('some');
-        $sut = null;
-
-        $exp = json_encode(['ucfirst', 'str_shuffle']);
-        $this->assertTrue(file_exists($this->jsonFile));
-        $this->assertEquals($exp, file_get_contents($this->jsonFile));
-    }
-
-    /**
-     * @test
-     * it should allow appending to a previously existing file
-     */
-    public function it_should_allow_appending_to_a_previously_existing_file()
-    {
-        $sut = new FunctionCallsCollector();
-        $contents = ['a_function', 'b_function'];
-        file_put_contents($this->jsonFile, json_encode($contents));
-
-        $sut->_setJsonFilePath($this->jsonFile);
-        $sut->_shouldAppend();
-
-        $sut->ucfirst('some');
-        $sut->ucfirst('some');
-        $sut->ucfirst('some');
-        $sut->str_shuffle('some');
-        $sut->str_shuffle('some');
-        $sut->str_shuffle('some');
-        $sut = null;
-
-        $exp = json_encode(['a_function', 'b_function', 'ucfirst', 'str_shuffle']);
-        $this->assertTrue(file_exists($this->jsonFile));
-        $this->assertEquals($exp, file_get_contents($this->jsonFile));
-    }
-
-    /**
-     * @test
      * it should setting a PHPUnit mock object to stub and mock calls
      */
     public function it_should_setting_a_php_unit_mock_object_to_stub_and_mock_calls()
