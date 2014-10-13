@@ -33,39 +33,6 @@ class FunctionCallsCollectorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * it should return an array of called reflected functions
-     */
-    public function it_should_return_an_array_of_called_reflected_functions()
-    {
-        $sut = new FunctionCallsCollector();
-        $sut->ucfirst('some');
-
-        $called = $sut->_getCalled();
-        $this->assertEquals([new ReflectionFunction('ucfirst')], $called);
-    }
-
-    /**
-     * @test
-     * it should return an array of unique elements
-     */
-    public function it_should_return_an_array_of_unique_elements()
-    {
-        $sut = new FunctionCallsCollector();
-        $sut->ucfirst('some');
-        $sut->ucfirst('some');
-        $sut->ucfirst('some');
-        $sut->str_shuffle('some');
-        $sut->str_shuffle('some');
-        $sut->str_shuffle('some');
-
-        $called = $sut->_getCalled();
-        $this->assertCount(2, $called);
-        $expected = [new ReflectionFunction('ucfirst'), new ReflectionFunction('str_shuffle')];
-        $this->assertEquals($expected, $called);
-    }
-
-    /**
-     * @test
      * it should allow setting a source json file
      */
     public function it_should_allow_setting_a_source_json_file()
@@ -77,68 +44,20 @@ class FunctionCallsCollectorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * it should write the list of called functions to the file when destructing
-     */
-    public function it_should_write_the_list_of_called_functions_to_the_file_when_destructing()
-    {
-        $sut = new FunctionCallsCollector();
-        $sut->_setJsonFilePath($this->jsonFile);
-
-        $sut->ucfirst('some');
-        $sut->ucfirst('some');
-        $sut->ucfirst('some');
-        $sut->str_shuffle('some');
-        $sut->str_shuffle('some');
-        $sut->str_shuffle('some');
-        $sut = null;
-
-        $exp = json_encode(['ucfirst', 'str_shuffle']);
-        $this->assertTrue(file_exists($this->jsonFile));
-        $this->assertEquals($exp, file_get_contents($this->jsonFile));
-    }
-
-    /**
-     * @test
-     * it should allow appending to a previously existing file
-     */
-    public function it_should_allow_appending_to_a_previously_existing_file()
-    {
-        $sut = new FunctionCallsCollector();
-        $contents = ['a_function', 'b_function'];
-        file_put_contents($this->jsonFile, json_encode($contents));
-
-        $sut->_setJsonFilePath($this->jsonFile);
-        $sut->_shouldAppend();
-
-        $sut->ucfirst('some');
-        $sut->ucfirst('some');
-        $sut->ucfirst('some');
-        $sut->str_shuffle('some');
-        $sut->str_shuffle('some');
-        $sut->str_shuffle('some');
-        $sut = null;
-
-        $exp = json_encode(['a_function', 'b_function', 'ucfirst', 'str_shuffle']);
-        $this->assertTrue(file_exists($this->jsonFile));
-        $this->assertEquals($exp, file_get_contents($this->jsonFile));
-    }
-
-    /**
-     * @test
      * it should setting a PHPUnit mock object to stub and mock calls
      */
     public function it_should_setting_a_php_unit_mock_object_to_stub_and_mock_calls()
     {
         $sut = new FunctionCallsCollector();
-        $mockObject = $this->getMock('stdClass', array('someMethod'));
+        $mockObject = $this->getMock('stdClass', array('some_method_3324'));
         $mockObject->expects($this->once())
-            ->method('someMethod')
+            ->method('some_method_3324')
             ->will($this->returnValue('foo'));
 
         $sut->_setMockObject($mockObject);
 
         $this->assertSame($mockObject, $sut->_getMockObject());
-        $this->assertEquals('foo', $sut->someMethod());
+        $this->assertEquals('foo', $sut->some_method_3324());
     }
 
     /**
@@ -178,4 +97,155 @@ class FunctionCallsCollectorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('somesome', $sut->str_repeat('some', 2));
     }
+
+    /**
+     * @test
+     * it should return data about the str_shuffle function
+     */
+    public function it_should_return_data_about_str_shuffle_function()
+    {
+        $expected = ['str_shuffle' => [
+            'name' => 'str_shuffle',
+            'parameters' => [
+                'str' => [
+                    'type' => false,
+                    'isPassedByReference' => false,
+                    'name' => 'str',
+                    'isOptional' => false,
+                    'defaultValue' => false
+                ]
+            ]
+        ]
+        ];
+        $sut = new FunctionCallsCollector();
+        $sut->str_shuffle('some');
+        $this->assertEquals($expected, $sut->_getCalled());
+    }
+
+    /**
+     * @test
+     * it should return accurate data about type hinting function
+     */
+    public function it_should_return_accurate_data_about_type_hinting_function()
+    {
+        $expected = ['type_hinting_function' => [
+            'name' => 'type_hinting_function',
+            'parameters' => [
+                'object' => [
+                    'type' => 'stdClass',
+                    'isPassedByReference' => false,
+                    'name' => 'object',
+                    'isOptional' => false,
+                    'defaultValue' => false
+                ],
+                'array' => [
+                    'type' => 'array',
+                    'isPassedByReference' => false,
+                    'name' => 'array',
+                    'isOptional' => true,
+                    'defaultValue' => false
+                ]
+            ]
+        ]
+        ];
+        $sut = new FunctionCallsCollector();
+        $sut->type_hinting_function(new stdClass());
+        $this->assertEquals($expected, $sut->_getCalled());
+    }
+
+    /**
+     * @test
+     * it should return proper called information for interface type hints
+     */
+    public function it_should_return_proper_called_information_for_interface_type_hints()
+    {
+        $expected = ['interface_type_hinting_function' => [
+            'name' => 'interface_type_hinting_function',
+            'parameters' => [
+                'interface' => [
+                    'type' => 'Interface2233',
+                    'isPassedByReference' => false,
+                    'name' => 'interface',
+                    'isOptional' => false,
+                    'defaultValue' => false
+                ]
+            ]
+        ]
+        ];
+        $sut = new FunctionCallsCollector();
+        $sut->interface_type_hinting_function($this->getMock('Interface2233'));
+        $this->assertEquals($expected, $sut->_getCalled());
+    }
+//    function name_spaced_type_hinting_function(Codeception\PHPUnit\Log $log){
+
+    /**
+     * @test
+     * it should return proper information about namespace type hinted parameters
+     */
+    public function it_should_return_proper_information_about_namespace_type_hinted_parameters()
+    {
+        $expected = ['name_spaced_type_hinting_function' => [
+            'name' => 'name_spaced_type_hinting_function',
+            'parameters' => [
+                'log' => [
+                    'type' => 'Codeception\PHPUnit\Log',
+                    'isPassedByReference' => false,
+                    'name' => 'log',
+                    'isOptional' => false,
+                    'defaultValue' => false
+                ]
+            ]
+        ]
+        ];
+        $sut = new FunctionCallsCollector();
+        $sut->name_spaced_type_hinting_function($this->getMock('Codeception\PHPUnit\Log'));
+        $this->assertEquals($expected, $sut->_getCalled());
+    }
+
+    /**
+     * @test
+     * it should return proper information about int argument functions
+     */
+    public function it_should_return_proper_information_about_int_argument_functions()
+    {
+        $expected = ['int_argument_function' => [
+            'name' => 'int_argument_function',
+            'parameters' => [
+                'val' => [
+                    'type' => false,
+                    'isPassedByReference' => false,
+                    'name' => 'val',
+                    'isOptional' => true,
+                    'defaultValue' => 3
+                ]
+            ]
+        ]
+        ];
+        $sut = new FunctionCallsCollector();
+        $sut->int_argument_function();
+        $this->assertEquals($expected, $sut->_getCalled());
+    }
+}
+
+interface Interface2233{
+
+}
+
+function some_method_3324()
+{
+}
+
+function type_hinting_function(stdClass $object, array $array = null)
+{
+}
+
+function interface_type_hinting_function(Interface2233 $interface){
+}
+
+function name_spaced_type_hinting_function(Codeception\PHPUnit\Log $log){
+
+}
+
+function int_argument_function($val = 3){
+
 }

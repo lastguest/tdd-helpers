@@ -16,7 +16,8 @@
         "smarty/smarty": "~3.1"
     },
     "require-dev": {
-        "codeception/codeception": "*"
+        "codeception/codeception": "*",
+        "way/phpunit-wrappers": "dev-master"
     },
     "autoload": {
         "psr-0": {

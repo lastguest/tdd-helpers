@@ -33,7 +33,28 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
     public function __call($function, $arguments)
     {
         $reflectionFunction = new \ReflectionFunction($function);
-        $this->called[$reflectionFunction->name] = $reflectionFunction;
+
+        $name = $reflectionFunction->name;
+        $args = array(
+            'name' => $name,
+            'parameters' => array()
+        );
+
+        foreach ($reflectionFunction->getParameters() as $param) {
+            $type = $param->getClass() ? $param->getClass()->name : false;
+            if (!$type && $param->isArray()) {
+                $type = 'array';
+            }
+            $args['parameters'][$param->name] = array(
+                'type' => $type,
+                'isPassedByReference' => $param->isPassedByReference(),
+                'name' => $param->name,
+                'isOptional' => $param->isOptional(),
+                'defaultValue' => $param->isDefaultValueAvailable() && $param->getDefaultValue() ? $param->getDefaultValue() : false
+            );
+        }
+
+        $this->called[$name] = $args;
 
         $responder = $this->mockObject ? array($this->mockObject, $function) : $function;
 
@@ -42,7 +63,7 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
 
     public function _getCalled()
     {
-        return array_values($this->called);
+        return $this->called;
     }
 
     public function _setJsonFilePath($jsonFilePath)
@@ -65,8 +86,11 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
         if (!$jsonFilePath) {
             return;
         }
-        $onFile = $this->shouldAppend ? json_decode(@file_get_contents($this->jsonFilePath)) : array();
-        $contents = json_encode(array_merge($onFile, array_keys($this->called)));
+        $onFile = array();
+        if ($this->shouldAppend) {
+            $onFile = json_decode(@file_get_contents($this->jsonFilePath), true);
+        }
+        $contents = json_encode(array_merge($onFile, $this->called));
         @file_put_contents($this->jsonFilePath, $contents);
     }
 

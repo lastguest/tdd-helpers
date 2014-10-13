@@ -19,15 +19,7 @@ class AdapterClassGenerator extends ClassGeneratorBase
      */
     public function __construct(array $functions = null, \Smarty $smarty = null, FileWriter $fileWriter = null)
     {
-        if (is_array($functions)) {
-            array_walk($functions, function ($el, $index) {
-                if (!is_a($el, 'ReflectionFunction')) {
-                    throw new \Exception("All array elements should be ReflectionFunction instances, $index is not");
-                }
-            });
-            $this->functions = $functions;
-        }
-
+        $this->functions = $functions ? $functions : array();
         $this->smarty = $smarty ? $smarty : \tad_Base_SmartyFactory::on(__FILE__);
         $this->fileWriter = $fileWriter ? $fileWriter : null;
     }
@@ -47,17 +39,11 @@ class AdapterClassGenerator extends ClassGeneratorBase
         if (!file_exists($jsonFilePath)) {
             throw new \Exception('Json file does not exist');
         }
-        $functions = json_decode(file_get_contents($jsonFilePath));
+        $functions = json_decode(file_get_contents($jsonFilePath), true);
         if (!is_array($functions)) {
             throw new \Exception('Value stored in json file must be an array');
         }
-        $existingFunctions = array_filter($functions, function ($func) {
-            return function_exists($func);
-        });
-        $refFunctions = array_map(function ($functionName) {
-            return new \ReflectionFunction($functionName);
-        }, $existingFunctions);
-        return new self($refFunctions);
+        return new self($functions);
     }
 
     /**
@@ -132,43 +118,33 @@ class AdapterClassGenerator extends ClassGeneratorBase
      * @throws \Exception
      * @throws \SmartyException
      */
-    public function getMethodMarkup(\ReflectionFunction $function)
+    public function getMethodMarkup(array $function)
     {
         $vars = array(
-            'methodName' => $function->name,
-            'signatureArgsString' => $this->getSignatureArgsString($function),
-            'callArgsString' => $this->getCallArgsString($function)
+            'methodName' => $function['name'],
+            'signatureArgsString' => $this->getSignatureArgsString($function['parameters']),
+            'callArgsString' => $this->getCallArgsString($function['parameters'])
         );
         $this->smarty->assign($vars);
         return $this->smarty->fetch('method_common.tpl');
     }
 
-    protected function getSignatureArgsString(\ReflectionFunction $function)
+    protected function getSignatureArgsString(array $function)
     {
         $argsStrings = array_map(function ($parameter) {
-            $typeHintedClass = '';
-            if ($parameter->getClass()) {
-                $typeHintedClass = $parameter->getClass()->name . ' ';
-            } else if ($parameter->isArray()) {
-                $typeHintedClass = 'array ';
-            }
-            $reference = $parameter->isPassedByReference() ? '&' : '';
-            $optionalOrDefaultValue = '';
-            if ($parameter->isOptional()) {
-                $optionalOrDefaultValue = ' = null';
-            } else if ($parameter->isDefaultValueAvailable()) {
-                $optionalOrDefaultValue = ' = ' . (string)$parameter->getDefaultValue();
-            }
+            $typeHintedClass = $parameter['type'] ? $parameter['type'] . ' ' : '';
+            $reference = $parameter['isPassedByReference'] ? '&' : '';
+            $optionalOrDefaultValue = $parameter['isOptional'] ? ' = null' : ' = ' . $parameter['defaultValue'];
             return sprintf('%s%s$%s%s', $typeHintedClass, $reference, $parameter->name, $optionalOrDefaultValue);
-        }, $function->getParameters());
+        }, $function['parameters']);
         return implode(', ', $argsStrings);
     }
 
-    protected function getCallArgsString(\ReflectionFunction $function)
+    protected function getCallArgsString(array $function)
     {
         $callArgs = array_map(function ($parameter) {
-            return sprintf('$%s', $parameter->name);
-        }, $function->getParameters());
+            return sprintf('$%s', $parameter['name']);
+        }, $function['parameters']);
         $callArgs = implode(', ', $callArgs);
         return $callArgs;
     }

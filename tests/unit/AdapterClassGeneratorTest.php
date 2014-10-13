@@ -7,9 +7,12 @@ class AdapterClassGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     protected $jsonFile;
     protected $outputFile;
+    protected $jsonExampleSource;
 
     protected function setUp()
     {
+        $this->jsonExampleSource = __DIR__ . '/../_dump/json_example_source.json';
+
         $this->jsonFile = __DIR__ . '/../_dump/jsonSource.json';
         if (file_exists($this->jsonFile)) {
             unlink($this->jsonFile);
@@ -23,105 +26,6 @@ class AdapterClassGeneratorTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-    }
-
-    /**
-     * @test
-     * it should require constructing it using an array of ReflectionFunction
-     */
-    public function it_should_require_constructing_it_using_an_array_of_reflection_function()
-    {
-        $this->setExpectedException('Exception');
-        new AdapterClassGenerator();
-
-        $this->setExpectedException('Exception');
-        new AdapterClassGenerator(['some', 'foo']);
-
-    }
-
-    /**
-     * @test
-     * it should return PHP markup for a method calling a function
-     */
-    public function it_should_return_php_markup_for_a_method_calling_a_function()
-    {
-        $in = new ReflectionFunction('someMethod');
-        $sut = new AdapterClassGenerator();
-        $markup = <<<EOC
-public function someMethod(array \$list, stdClass \$object)
-{
-    return someMethod(\$list, \$object);
-}
-EOC;
-        $this->assertEquals($markup, $sut->getMethodMarkup($in));
-    }
-
-    /**
-     * @test
-     * it should return proper PHP markup for functions with arguments
-     */
-    public function it_should_return_proper_php_markup_for_functions_with_arguments()
-    {
-        $in = new ReflectionFunction('someMethod');
-        $sut = new AdapterClassGenerator();
-        $markup = <<<EOC
-public function someMethod(array \$list, stdClass \$object)
-{
-    return someMethod(\$list, \$object);
-}
-EOC;
-        $this->assertEquals($markup, $sut->getMethodMarkup($in));
-    }
-
-    /**
-     * @test
-     * it should return proper PHP markup for function with no arguments
-     */
-    public function it_should_return_proper_php_markup_for_function_with_no_arguments()
-    {
-        $in = new ReflectionFunction('noArgs');
-        $sut = new AdapterClassGenerator();
-        $markup = <<<EOC
-public function noArgs()
-{
-    return noArgs();
-}
-EOC;
-        $this->assertEquals($markup, $sut->getMethodMarkup($in));
-    }
-
-    /**
-     * @test
-     * it should return proper markup for functions with string arguments
-     */
-    public function it_should_return_proper_markup_for_functions_with_string_arguments()
-    {
-        $in = new ReflectionFunction('str_shuffle');
-        $sut = new AdapterClassGenerator();
-        $markup = <<<EOC
-public function str_shuffle(\$str)
-{
-    return str_shuffle(\$str);
-}
-EOC;
-        $this->assertEquals($markup, $sut->getMethodMarkup($in));
-    }
-
-    /**
-     * @test
-     * it should return proper markup for functions with scalar arguments
-     */
-    public function it_should_return_proper_markup_for_functions_with_scalar_arguments()
-    {
-        $in = new ReflectionFunction('abs');
-        $sut = new AdapterClassGenerator();
-        $markup = <<<EOC
-public function abs(\$number)
-{
-    return abs(\$number);
-}
-EOC;
-        $this->assertEquals($markup, $sut->getMethodMarkup($in));
     }
 
     /**
@@ -296,61 +200,54 @@ EOC;
 
     /**
      * @test
-     * it should properly call functions accepting arguments by reference
-     */
-    public function it_should_properly_call_functions_accepting_arguments_by_reference()
-    {
-        $sut = new AdapterClassGenerator([new ReflectionFunction('array_func')]);
-        $sut->setClassName('SomeClass');
-        $sut->addMagicCall(false);
-        $sut->setClassName('SomeClass');
-        $markup = <<< EOC
-class SomeClass {
-
-    public function array_func(array &\$array)
-    {
-        return array_func(\$array);
-    }
-
-}
-EOC;
-        $this->assertEquals($markup, $sut->getClassMarkup());
-    }
-
-    /**
-     * @test
      * it should allow constructing it from a json source file
      */
     public function it_should_allow_constructing_it_from_a_json_source_file()
     {
-        $functions = ['ucfirst', 'str_shuffle'];
-        $expected = array_map(function ($func) {
-            return new ReflectionFunction($func);
-        }, $functions);
-        file_put_contents($this->jsonFile, json_encode($functions));
-
-        $sut = AdapterClassGenerator::constructFromJson($this->jsonFile);
+        $arr = [
+            'method_one_2134' => [
+                'name' => 'method_one_2134',
+                'parameters' => [
+                    'object' => [
+                        'type' => 'stdClass',
+                        'isPassedByReference' => false,
+                        'name' => 'object',
+                        'isOptional' => false,
+                        'defaultValue' => false
+                    ],
+                    'array' => [
+                        'type' => 'array',
+                        'isPassedByReference' => false,
+                        'name' => 'array',
+                        'isOptional' => false,
+                        'defaultValue' => false
+                    ]
+                ]
+            ],
+            'method_two_2134' => [
+                'name' => 'method_two_2134',
+                'parameters' => [
+                    'string' => [
+                        'type' => false,
+                        'isPassedByReference' => false,
+                        'name' => 'string',
+                        'isOptional' => false,
+                        'defaultValue' => false
+                    ],
+                    'integer' => [
+                        'type' => false,
+                        'isPassedByReference' => false,
+                        'name' => 'integer',
+                        'isOptional' => false,
+                        'defaultValue' => false
+                    ]
+                ]
+            ]
+        ];
+        $sut = AdapterClassGenerator::constructFromJson($this->jsonExampleSource);
 
         $this->assertInstanceOf('tad\Generators\Adapter\AdapterClassGenerator', $sut);
-        $this->assertEquals($expected, $sut->getFunctions());
-    }
-
-    /**
-     * @test
-     * it should skip not defined functions
-     */
-    public function it_should_skip_not_defined_functions()
-    {
-        $functions = ['ucfirst', 'str_shuffle', 'non_existing_function'];
-        $expected = array_map(function ($func) {
-            return new ReflectionFunction($func);
-        }, ['ucfirst', 'str_shuffle']);
-        file_put_contents($this->jsonFile, json_encode($functions));
-
-        $sut = AdapterClassGenerator::constructFromJson($this->jsonFile);
-
-        $this->assertInstanceOf('tad\Generators\Adapter\AdapterClassGenerator', $sut);
-        $this->assertEquals($expected, $sut->getFunctions());
+        $this->assertEquals($arr, $sut->getFunctions());
     }
 
     /**
@@ -394,32 +291,6 @@ class SomeClass {
 
 }
 EOC;
-    $this->assertEquals($markup, $sut->getClassMarkup());
-    }
-
-    /**
-     * @test
-     * it should return proper markup for an adapter with functions and magic call
-     */
-    public function it_should_return_proper_markup_for_an_adapter_with_functions_and_magic_call()
-    {
-        $sut = new AdapterClassGenerator([new ReflectionFunction('someMethod')]);
-        $sut->setClassName('SomeClass');
-        $markup = <<< EOC
-class SomeClass {
-
-    public function __call(\$function, \$args)
-    {
-        return call_user_func_array(\$function, \$args);
-    }
-
-    public function someMethod(array \$list, stdClass \$object)
-    {
-        return someMethod(\$list, \$object);
-    }
-
-}
-EOC;
         $this->assertEquals($markup, $sut->getClassMarkup());
     }
 
@@ -429,41 +300,9 @@ EOC;
      */
     public function it_should_allow_setting_the_output_file()
     {
-       $sut = new AdapterClassGenerator();
+        $sut = new AdapterClassGenerator();
         $sut->setOutputFile($this->outputFile);
         $this->assertEquals($this->outputFile, $sut->getOutputFile());
-    }
-
-    /**
-     * @test
-     * it should write a class to file
-     */
-    public function it_should_write_a_class_to_file()
-    {
-        $sut = new AdapterClassGenerator([new ReflectionFunction('someMethod')]);
-        $sut->addMagicCall(true);
-        $sut->setClassName('SomeClass');
-        $sut->setOutputFile($this->outputFile);
-
-        $contents = <<< EOC
-<?php
-
-class SomeClass {
-
-    public function __call(\$function, \$args)
-    {
-        return call_user_func_array(\$function, \$args);
-    }
-
-    public function someMethod(array \$list, stdClass \$object)
-    {
-        return someMethod(\$list, \$object);
-    }
-
-}
-EOC;
-        $sut->generate();
-        $this->assertEquals($contents, file_get_contents($this->outputFile));
     }
 }
 
