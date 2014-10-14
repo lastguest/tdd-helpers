@@ -112,7 +112,7 @@ class {$className} {if $interfaceName}implements {$interfaceName}{/if} {literal}
     $onFile = array();
     if ($this->shouldAppend) {literal}{{/literal}    $onFile = json_decode(@file_get_contents($this->jsonFilePath), true);
     {literal}}{/literal}
-    $contents = json_encode(array_merge($onFile, $this->called));
+    $contents = json_encode(array_unique(array_merge($onFile, $this->called)));
     @file_put_contents($this->jsonFilePath, $contents);
     {literal}}{/literal}
 

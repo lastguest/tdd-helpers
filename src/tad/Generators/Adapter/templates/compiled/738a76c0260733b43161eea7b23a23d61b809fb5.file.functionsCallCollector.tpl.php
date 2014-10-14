@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.19-dev, created on 2014-10-14 17:12:44
+<?php /* Smarty version Smarty-3.1.19-dev, created on 2014-10-14 17:23:04
          compiled from "/Users/Luca/Dropbox/Developer/WebDeveloper/websites/php52/composer-packages/tdd-helpers/src/tad/Generators/Adapter/templates/functionsCallCollector.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:81576737054369a55637ab3-87135902%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '738a76c0260733b43161eea7b23a23d61b809fb5' => 
     array (
       0 => '/Users/Luca/Dropbox/Developer/WebDeveloper/websites/php52/composer-packages/tdd-helpers/src/tad/Generators/Adapter/templates/functionsCallCollector.tpl',
-      1 => 1413299534,
+      1 => 1413300166,
       2 => 'file',
     ),
   ),
@@ -146,7 +146,7 @@ class <?php echo $_smarty_tpl->tpl_vars['className']->value;?>
     $onFile = array();
     if ($this->shouldAppend) {    $onFile = json_decode(@file_get_contents($this->jsonFilePath), true);
     }
-    $contents = json_encode(array_merge($onFile, $this->called));
+    $contents = json_encode(array_unique(array_merge($onFile, $this->called)));
     @file_put_contents($this->jsonFilePath, $contents);
     }
 
