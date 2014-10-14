@@ -9,7 +9,7 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
     protected $called;
 
     /**
-     * @var string
+     * @var string Absolute path to the the json file logged functions will be written to.
      */
     protected $jsonFilePath;
 
@@ -23,6 +23,12 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
      */
     protected $mockObject;
 
+    /**
+     * @param array $called
+     * @param null $jsonFilePath
+     * @param bool $shoulAppend
+     * @param \PHPUnit_Framework_MockObject_MockObject $mockObject
+     */
     public function __construct(array $called = null, $jsonFilePath = null, $shoulAppend = false, \PHPUnit_Framework_MockObject_MockObject $mockObject = null)
     {
         $this->called = array();
@@ -30,6 +36,11 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
         $this->mockObject = $mockObject ? $mockObject : null;
     }
 
+    /**
+     * @param $function
+     * @param $arguments
+     * @return mixed
+     */
     public function __call($function, $arguments)
     {
         $reflectionFunction = new \ReflectionFunction($function);
@@ -61,11 +72,19 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
         return call_user_func_array($responder, $arguments);
     }
 
+    /**
+     * @return array The called functions information stored under their name.
+     */
     public function _getCalled()
     {
         return $this->called;
     }
 
+    /**
+     * @param $jsonFilePath
+     * @return $this
+     * @throws \Exception
+     */
     public function _setJsonFilePath($jsonFilePath)
     {
         if (!is_string($jsonFilePath)) {
@@ -75,6 +94,9 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function _getJsonFilePath()
     {
         return $this->jsonFilePath;
@@ -94,6 +116,13 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
         @file_put_contents($this->jsonFilePath, $contents);
     }
 
+    /**
+     * Sets the log to be appended to the previously stored calls
+     * in place of overwriting them.
+     *
+     * @param bool $shouldAppend
+     * @return $this
+     */
     public function _shouldAppend($shouldAppend = true)
     {
         $this->shouldAppend = $shouldAppend ? true : false;
@@ -101,6 +130,8 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
     }
 
     /**
+     *  Returns the set mock object if any.
+     *
      * @return null|\PHPUnit_Framework_MockObject_MockObject
      */
     public function _getMockObject()
@@ -109,12 +140,14 @@ class FunctionCallsCollector implements \tad_Adapters_FunctionsInterface
     }
 
     /**
-     * @param null|\PHPUnit_Framework_MockObject_MockObject $mockObject
+     * Sets the mock object that will respond to function calls.
+     *
+     * @param \PHPUnit_Framework_MockObject_MockObject $mockObject
+     * @return $this
      */
     public function _setMockObject(\PHPUnit_Framework_MockObject_MockObject $mockObject = null)
     {
         $this->mockObject = $mockObject;
         return $this;
     }
-
 }
