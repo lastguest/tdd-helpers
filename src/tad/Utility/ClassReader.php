@@ -21,6 +21,11 @@ class ClassReader
      */
     protected $autoloadFile;
 
+    /**
+     * @var string
+     */
+    protected $fileRoot;
+
     public function getClassesCode()
     {
         if ($this->autoloadFile) {
@@ -28,7 +33,10 @@ class ClassReader
         }
         $this->code = array_map(function ($class) {
             if (!file_exists($class) && !class_exists($class)) {
-                throw new \Exception("Class $class is not an absolute file path nor a defined class name.");
+                $class = $this->fileRoot ? $this->fileRoot . DIRECTORY_SEPARATOR . $class . '.php' : false;
+                if (!$class) {
+                    throw new \Exception("Class $class is not an absolute file path nor a defined class name.");
+                }
             }
 
             $classes = array($class);
@@ -72,5 +80,10 @@ class ClassReader
     public function setAutoloadFile($autoloadFile)
     {
         $this->autoloadFile = $autoloadFile;
+    }
+
+    public function setFileRoot($fileRoot)
+    {
+        $this->fileRoot = $fileRoot;
     }
 }

@@ -9,6 +9,7 @@ class ClassReaderTest extends \PHPUnit_Framework_TestCase
      */
     protected $sut;
 
+
     protected function setUp()
     {
         $this->sut = new ClassReader();
@@ -127,4 +128,21 @@ class ClassReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($exp, $code);
     }
 
+
+    /**
+     * @test
+     * it should allow setting a file root
+     */
+    public function it_should_allow_setting_a_file_root()
+    {
+        $fileRoot = __DIR__ . '/../_dump';
+        $this->sut->setFileRoot($fileRoot);
+        // not loaded, not declared
+        $this->sut->setClasses('ClassicClass6');
+        $exp = 'class ClassicClass6 { //class code here }';
+
+        $code = $this->sut->getClassesCode();
+
+        $this->assertEquals($exp, $code);
+    }
 }
