@@ -29,7 +29,7 @@ class ClassReader
     public function getClassesCode()
     {
         if ($this->autoloadFile) {
-            include_once($this->autoloadFile);
+            @include_once($this->autoloadFile);
         }
         $this->code = array_map(function ($class) {
             if (!file_exists($class) && !class_exists($class)) {
