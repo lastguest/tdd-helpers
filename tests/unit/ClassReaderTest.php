@@ -110,4 +110,21 @@ class ClassReaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($exp, $code);
     }
+
+    /**
+     * @test
+     * it should allow specifying an autoload file
+     */
+    public function it_should_allow_specifying_an_autoload_file()
+    {
+        $file = __DIR__ . '/../_dump/ClassWithAutoloadParent.php';
+        $this->sut->setAutoloadFile(__DIR__ . '/../_dump/pseudo_autoloader.php');
+        $this->sut->setClasses($file);
+        $exp = 'class ClassWithAutoloadParent extends AutoloadingParentClass{ //class code here }';
+
+        $code = $this->sut->getClassesCode();
+
+        $this->assertEquals($exp, $code);
+    }
+
 }

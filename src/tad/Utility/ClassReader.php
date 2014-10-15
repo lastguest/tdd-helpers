@@ -16,8 +16,16 @@ class ClassReader
      */
     protected $code;
 
+    /**
+     * @var string
+     */
+    protected $autoloadFile;
+
     public function getClassesCode()
     {
+        if ($this->autoloadFile) {
+            include_once($this->autoloadFile);
+        }
         $this->code = array_map(function ($class) {
             if (!file_exists($class) && !class_exists($class)) {
                 throw new \Exception("Class $class is not an absolute file path nor a defined class name.");
@@ -29,7 +37,7 @@ class ClassReader
             if (file_exists($class)) {
                 $file = $class;
                 $declaredClassesBefore = get_declared_classes();
-                include $class;
+                @include_once $class;
                 $declaredClassesAfter = get_declared_classes();
                 $newlyDeclaredClasses = array_diff($declaredClassesAfter, $declaredClassesBefore);
                 $classes = $newlyDeclaredClasses;
@@ -59,5 +67,10 @@ class ClassReader
             throw new \Exception('Classes must either be an array or a string if it\'s not null');
         }
         $this->classes = is_array($classes) ? $classes : array($classes);
+    }
+
+    public function setAutoloadFile($autoloadFile)
+    {
+        $this->autoloadFile = $autoloadFile;
     }
 }
